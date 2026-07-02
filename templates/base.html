@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Buddy - {% block title %}Home{% endblock %}</title>
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('auth.home') }}">
+                <i class="bi bi-trophy-fill text-success me-2"></i>Sports Buddy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.home') }}">
+                            <i class="bi bi-house-fill me-1"></i>Home
+                        </a>
+                    </li>
+                    {% if session.user_id %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">
+                            <i class="bi bi-search me-1"></i>Discover Matches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.leaderboard_page') }}">
+                            <i class="bi bi-trophy-fill text-warning me-1"></i>Global Leaderboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('chat.conversations_page') }}">
+                            <i class="bi bi-chat-dots me-1"></i>Chat
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('chat.ai_assistant_page') }}">
+                            <i class="bi bi-robot me-1"></i>AI Assistant
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('team.teams') }}">
+                            <i class="bi bi-people me-1"></i>Teams
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('team.team_leaderboard') }}">
+                            <i class="bi bi-trophy-fill text-warning me-1"></i>Team Leaderboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('team.create_team') }}">
+                            <i class="bi bi-plus-circle me-1"></i>Create Team
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('social.seasonal_leaderboard_page') }}">
+                            <i class="bi bi-trophy-fill text-warning me-1"></i>Leaderboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('social.notifications_page') }}">
+                            <i class="bi bi-bell me-1"></i>Notifications
+                            {% if session.user_id %}
+                            <span id="navNotificationCount" class="badge bg-danger ms-1" style="display:none;">0</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('social.profile_page', user_id=session.user_id) }}">
+                            <i class="bi bi-person-circle me-1"></i>{{ session.user_name }}
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register') }}">
+                            <i class="bi bi-person-plus-fill me-1"></i>Register
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notification Bell (dropdown) -->
+    {% if session.user_id %}
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div class="dropdown">
+            <button class="btn btn-outline-light position-relative" id="notificationBell" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-bell fs-5"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    id="notificationCount" style="display:none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end bg-dark border-secondary"
+                style="min-width: 320px; max-height: 400px; overflow-y: auto;">
+                <div class="d-flex justify-content-between align-items-center px-3 py-2 border-secondary border-bottom">
+                    <h6 class="text-white mb-0">Notifications</h6>
+                    <button class="btn btn-sm btn-outline-light" id="markAllReadBtn">Mark all read</button>
+                </div>
+                <div id="notificationList">
+                    <div class="text-center py-4 text-white-50">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-3 bg-dark">
+        <div class="container text-center">
+            <span class="text-muted">© 2026 Sports Buddy. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <!-- Notification System Script -->
+    {% if session.user_id %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const notificationBell = document.getElementById('notificationBell');
+            const notificationList = document.getElementById('notificationList');
+            const notificationCount = document.getElementById('notificationCount');
+            const markAllReadBtn = document.getElementById('markAllReadBtn');
+
+            if (!notificationBell || !notificationList) return;
+
+            function loadNotifications() {
+                fetch('/api/notifications')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.success) {
+                            notificationList.innerHTML =
+                                '<div class="text-center py-4 text-danger">Failed to load notifications</div>';
+                            return;
+                        }
+                        const notifications = data.notifications;
+                        const unreadCount = data.unread_count;
+
+                        if (unreadCount > 0) {
+                            notificationCount.style.display = 'inline';
+                            notificationCount.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                        } else {
+                            notificationCount.style.display = 'none';
+                        }
+
+                        if (!notifications || notifications.length === 0) {
+                            notificationList.innerHTML =
+                                '<div class="text-center py-4 text-white-50">No notifications yet</div>';
+                            return;
+                        }
+
+                        let html = '';
+                        notifications.forEach(n => {
+                            const timeAgo = getTimeAgo(new Date(n.created_at));
+                            const clickAction = getNotificationAction(n);
+                            html += `
+                                <div class="list-group-item list-group-item-action bg-dark text-white border-secondary ${n.is_read ? '' : 'border-start border-warning'}"
+                                     data-notification-id="${n.id}" style="cursor: pointer;" onclick="${clickAction}">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <div class="fw-semibold text-white">${escapeHtml(n.title)}</div>
+                                            <div class="text-white small">${escapeHtml(n.message)}</div>
+                                            <div class="text-white mt-1" style="font-size: 0.75rem;">${timeAgo}</div>
+                                        </div>
+                                        ${n.is_read ? '<span class="badge bg-secondary">Read</span>' : '<span class="badge bg-warning text-dark">New</span>'}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        notificationList.innerHTML = html;
+                    })
+                    .catch(() => {
+                        notificationList.innerHTML =
+                            '<div class="text-center py-4 text-danger">Error loading notifications</div>';
+                    });
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.appendChild(document.createTextNode(str));
+                return div.innerHTML;
+            }
+
+            function getNotificationAction(notification) {
+                const type = notification.type || '';
+                const relatedMatchId = notification.related_match_id;
+                const relatedUserId = notification.related_user_id;
+                const relatedConversationId = notification.related_conversation_id;
+
+                if (type === 'new_private_message' && relatedConversationId) {
+                    return `window.location.href='/conversations'`;
+                }
+                if (type === 'new_group_message' && relatedMatchId) {
+                    return `window.location.href='/match/${relatedMatchId}/chat'`;
+                }
+                if (type === 'badge_unlocked') {
+                    return `window.location.href='/profile/${notification.user_id || ''}'`;
+                }
+                if (type === 'new_follower' && relatedUserId) {
+                    return `window.location.href='/profile/${relatedUserId}'`;
+                }
+                if (type === 'ai_report_ready' && relatedMatchId) {
+                    return `window.location.href='/match/${relatedMatchId}/chat'`;
+                }
+                if (relatedMatchId) {
+                    return `window.location.href='/match/${relatedMatchId}/chat'`;
+                }
+                if (relatedUserId) {
+                    return `window.location.href='/profile/${relatedUserId}'`;
+                }
+                return `window.location.href='/notifications'`;
+            }
+
+            function getTimeAgo(date) {
+                const seconds = Math.floor((new Date() - date) / 1000);
+                if (seconds < 60) return seconds + ' seconds ago';
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return minutes + ' minutes ago';
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return hours + ' hours ago';
+                const days = Math.floor(hours / 24);
+                return days + ' days ago';
+            }
+
+            // Load on bell click
+            notificationBell.addEventListener('click', function (e) {
+                setTimeout(loadNotifications, 100);
+            });
+
+            // Mark all read
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', function () {
+                    fetch('/api/notifications/read-all', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                notificationCount.style.display = 'none';
+                                loadNotifications();
+                            }
+                        })
+                        .catch(() => { });
+                });
+            }
+
+            // Initial load
+            loadNotifications();
+            // Periodic auto-refresh (every 15s)
+            setInterval(loadNotifications, 15000);
+        });
+    </script>
+    {% endif %}
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

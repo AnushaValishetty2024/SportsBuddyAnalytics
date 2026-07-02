@@ -1,0 +1,888 @@
+/* Sports Buddy - Custom Styles */
+
+/* Base Styles */
+body {
+    background-color: #0f172a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Card Styles */
+.card {
+    background-color: #1e293b !important;
+    border: 1px solid #334155;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.15) !important;
+}
+
+/* Form Styles */
+.form-control {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    color: #f8fafc;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+    background-color: #1e293b;
+    border-color: #22c55e;
+    box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25);
+    color: #f8fafc;
+}
+
+.form-control::placeholder {
+    color: #64748b;
+}
+
+/* Button Styles */
+.btn-success {
+    background-color: #22c55e;
+    border-color: #22c55e;
+    transition: all 0.2s ease;
+}
+
+.btn-success:hover {
+    background-color: #16a34a;
+    border-color: #16a34a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Navbar Styles */
+.navbar {
+    border-bottom: 1px solid #334155;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+.nav-link {
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #22c55e !important;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.alert-success {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.alert-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.alert-info {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Footer Styles */
+.footer {
+    border-top: 1px solid #334155;
+    margin-top: auto !important;
+}
+
+/* Hero Section */
+.hero-section {
+    animation: fadeInUp 0.8s ease;
+}
+
+/* Card Hover Effects for Feature Cards */
+.card.border-success {
+    border-width: 1px;
+}
+
+.card.border-success:hover {
+    border-color: #22c55e;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =============================================== */
+/* DASHBOARD STYLES */
+/* =============================================== */
+
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Section Headers */
+.dashboard-section {
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #334155;
+    transition: box-shadow 0.3s ease;
+}
+
+.dashboard-section:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.section-header h4 {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* Stat Cards */
+.stat-card {
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Match Cards */
+.match-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #334155;
+}
+
+.match-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+}
+
+.match-details {
+    font-size: 0.82rem;
+}
+
+/* Business Cards */
+.business-card {
+    border: 1px solid #334155;
+    transition: transform 0.2s ease;
+}
+
+.business-card:hover {
+    transform: translateY(-3px);
+    border-color: #3b82f6;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15);
+}
+
+/* Game Cards (All Games Section) */
+.game-card {
+    border: 1px solid #334155;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 130px;
+    background-color: #1e293b !important;
+}
+
+.game-card:hover {
+    transform: translateY(-6px);
+    border-color: #22c55e;
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.25);
+    background-color: rgba(34, 197, 94, 0.08) !important;
+}
+
+.game-card:active {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.game-card .game-icon {
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto;
+}
+
+.game-card .game-icon img {
+    transition: transform 0.3s ease;
+}
+
+.game-card:hover .game-icon img {
+    transform: scale(1.1);
+}
+
+.game-card .game-name-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* Game Details Modal */
+#gameDetailsModal .modal-content {
+    border: 1px solid #334155;
+    background-color: #1e293b;
+}
+
+#gameDetailsModal .modal-header {
+    border-bottom: 1px solid #334155;
+    background-color: #0f172a;
+}
+
+#gameDetailsModal .modal-footer {
+    border-top: 1px solid #334155;
+    background-color: #0f172a;
+}
+
+#gameDetailsModal .modal-body {
+    color: #ffffff;
+}
+
+#gameDetailsModal h6 {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+#gameDetailsModal p {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+#game-detail-description,
+#game-detail-rules,
+#game-detail-location,
+#game-detail-matches {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* Game Details Modal - Loading & States */
+#game-details-loading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Smooth modal transition */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+/* Game card responsive grid */
+@media (max-width: 576px) {
+    .game-card {
+        min-height: 110px;
+    }
+
+    .game-card .game-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .game-card .game-icon img {
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+    .game-card .game-name-text {
+        font-size: 0.75rem;
+    }
+}
+
+/* Leaderboard Table */
+.leaderboard-table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.leaderboard-table thead th {
+    background-color: #0f172a;
+    border-bottom: 2px solid #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.leaderboard-row {
+    transition: background-color 0.15s ease;
+}
+
+.leaderboard-row:hover {
+    background-color: rgba(34, 197, 94, 0.05) !important;
+}
+
+.player-avatar {
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+/* Map Container */
+#match-map {
+    height: 400px;
+    width: 100%;
+    border-radius: 12px;
+}
+
+.map-container {
+    border: 1px solid #334155;
+}
+
+.map-container .leaflet-container {
+    background-color: #1e293b;
+    border-radius: 12px;
+}
+
+.map-toggle.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+/* Match map loading and error states */
+.map-loading {
+    min-height: 400px;
+}
+
+/* Discover Filters */
+.discover-filters {
+    background-color: #1e293b;
+}
+
+.discover-filters .form-select,
+.discover-filters .form-control {
+    background-color: #0f172a;
+    border-color: #334155;
+    color: #f8fafc;
+}
+
+.discover-filters .form-select:focus,
+.discover-filters .form-control:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25);
+}
+
+/* Empty State */
+.empty-state {
+    opacity: 0.7;
+}
+
+/* Sport Tags */
+.sport-tags .badge {
+    font-size: 0.7rem;
+    transition: background-color 0.2s ease;
+}
+
+.sport-tags .badge:hover {
+    background-color: #22c55e !important;
+    color: #0f172a;
+}
+
+/* Modal Custom Styles */
+.modal-content {
+    border: 1px solid #334155;
+}
+
+.modal-header,
+.modal-footer {
+    border-color: #334155;
+}
+
+/* Scrollbar for Dashboard */
+.dashboard-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dashboard-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dashboard-container::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 3px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .dashboard-section {
+        padding: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+
+    .stat-icon {
+        font-size: 1.2rem;
+    }
+
+    .stat-card {
+        padding: 0.7rem;
+    }
+
+    .display-3 {
+        font-size: 2.5rem;
+    }
+
+    .hero-section {
+        padding: 2rem 1rem !important;
+    }
+}
+
+/* =============================================== */
+/* SPORTS CATEGORIES STYLES */
+/* =============================================== */
+
+/* Sport Cards */
+.sport-card {
+    border: 1px solid #334155;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #1e293b !important;
+}
+
+.sport-card:hover {
+    transform: translateY(-6px);
+    border-color: #f59e0b;
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.25);
+    background-color: rgba(245, 158, 11, 0.08) !important;
+}
+
+.sport-card:active {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.sport-card .sport-icon {
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto;
+}
+
+.sport-card .sport-icon img {
+    transition: transform 0.3s ease;
+}
+
+.sport-card:hover .sport-icon img {
+    transform: scale(1.15);
+}
+
+.sport-card .sport-name-text {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.sport-card .badge {
+    font-size: 0.7rem;
+}
+
+/* Sports Filter Buttons */
+.sports-filter-btn.active {
+    background-color: #f59e0b !important;
+    border-color: #f59e0b !important;
+    color: #0f172a !important;
+}
+
+.sports-filter-btn {
+    transition: all 0.2s ease;
+}
+
+.sports-filter-btn:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+/* Sport Detail Modal */
+#sportDetailModal .modal-content {
+    border: 1px solid #f59e0b;
+    background-color: #1e293b;
+}
+
+#sportDetailModal .modal-header {
+    border-bottom: 1px solid #f59e0b;
+    background-color: #0f172a;
+}
+
+#sportDetailModal .modal-footer {
+    border-top: 1px solid #f59e0b;
+    background-color: #0f172a;
+}
+
+#sportDetailModal .modal-body {
+    color: #ffffff;
+}
+
+#sportDetailModal h6 {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+#sportDetailModal .list-group-item {
+    background-color: transparent;
+}
+
+/* Sport detail quick stat boxes */
+#sportDetailModal .bg-dark.border-secondary.rounded.p-2 {
+    background-color: #0f172a !important;
+}
+
+/* Sport detail sections */
+#sportDetailModal .bg-dark.border-secondary.rounded.p-3 {
+    background-color: #0f172a !important;
+}
+
+/* Responsive adjustments for sports cards */
+@media (max-width: 576px) {
+    .sport-card .sport-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .sport-card .sport-icon img {
+        width: 44px !important;
+        height: 44px !important;
+    }
+
+    .sport-card .sport-name-text {
+        font-size: 0.72rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .col-6.sport-card-col {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #22c55e;
+}
+
+/* ===== Team Details Page ===== */
+
+.card,
+.card-body,
+.card-header {
+    background: rgba(30, 41, 59, 0.95) !important;
+    color: #f0f6fc !important;
+}
+
+.card-title,
+.card-text,
+.card p,
+.card strong,
+.card span,
+.card h1,
+.card h2,
+.card h3,
+.card h4,
+.card h5,
+.card h6 {
+    color: #f0f6fc !important;
+}
+
+.list-group-item {
+    background: rgba(30, 41, 59, 0.9) !important;
+    color: #f0f6fc !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.list-group-item * {
+    color: #f0f6fc !important;
+}
+
+.text-muted {
+    color: #8b949e !important;
+}
+
+/* =============================================== */
+/* LEADERBOARD STYLES - All Leaderboards */
+/* =============================================== */
+
+/* Leaderboard Table Headers - High Contrast */
+.leaderboard-table thead th,
+.table thead th,
+thead th {
+    background-color: #0f172a !important;
+    color: #f0f6fc !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    border-bottom: 2px solid #334155 !important;
+}
+
+/* Leaderboard Table Body - High Contrast */
+.leaderboard-table tbody td,
+.table tbody td,
+tbody td {
+    color: #000000 !important;
+    padding: 12px 8px;
+}
+
+/* Leaderboard Table Rows */
+.leaderboard-table tbody tr,
+.table tbody tr,
+tbody tr {
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+}
+
+.leaderboard-table tbody tr:hover,
+.table tbody tr:hover,
+tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* List Group Items for Leaderboards */
+.list-group-item {
+    color: #000000 !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.15s ease;
+}
+
+.list-group-item:hover {
+    background-color: rgba(255, 255, 255, 1) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Rank Numbers - Bold and Visible */
+.rank-number,
+.lb-rank,
+td:first-child strong,
+td:first-child {
+    font-weight: 700 !important;
+    color: #000000 !important;
+}
+
+/* Player Names - Bold and High Contrast */
+.player-name,
+.lb-player-name,
+td strong,
+td .fw-bold {
+    font-weight: 700 !important;
+    color: #000000 !important;
+}
+
+/* Points Badges - Ensure Visibility */
+.badge {
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+}
+
+.badge.bg-primary {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-success {
+    background-color: #16a34a !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-warning {
+    background-color: #f59e0b !important;
+    color: #0f172a !important;
+}
+
+/* Stats (Wins, Losses, Draws, Win Rate) */
+.stat-wins {
+    color: #22c55e !important;
+    font-weight: 600;
+}
+
+.stat-losses {
+    color: #ef4444 !important;
+    font-weight: 600;
+}
+
+.stat-draws {
+    color: #f59e0b !important;
+    font-weight: 600;
+}
+
+.stat-winrate {
+    color: #3b82f6 !important;
+    font-weight: 600;
+}
+
+/* Top 3 Special Highlighting */
+.rank-1-row,
+.rank-1,
+tr:nth-child(1) {
+    background-color: rgba(240, 201, 41, 0.1) !important;
+}
+
+.rank-2-row,
+.rank-2,
+tr:nth-child(2) {
+    background-color: rgba(164, 176, 190, 0.1) !important;
+}
+
+.rank-3-row,
+.rank-3,
+tr:nth-child(3) {
+    background-color: rgba(205, 127, 50, 0.1) !important;
+}
+
+.rank-1-row:hover,
+.rank-1:hover,
+tr:nth-child(1):hover {
+    background-color: rgba(240, 201, 41, 0.15) !important;
+}
+
+.rank-2-row:hover,
+.rank-2:hover,
+tr:nth-child(2):hover {
+    background-color: rgba(164, 176, 190, 0.15) !important;
+}
+
+.rank-3-row:hover,
+.rank-3:hover,
+tr:nth-child(3):hover {
+    background-color: rgba(205, 127, 50, 0.15) !important;
+}
+
+/* Trophy Icons - Ensure Visibility */
+.trophy-gold {
+    color: #ffd700 !important;
+}
+
+.trophy-silver {
+    color: #c0c0c0 !important;
+}
+
+.trophy-bronze {
+    color: #cd7f32 !important;
+}
+
+/* Loading and Empty States */
+.loading-text,
+.empty-text {
+    color: #c9d1d9 !important;
+    font-weight: 500;
+}
+
+/* Responsive Leaderboard */
+@media (max-width: 768px) {
+
+    .leaderboard-table thead th,
+    .table thead th,
+    thead th {
+        font-size: 0.75rem;
+        padding: 8px 6px;
+    }
+
+    .leaderboard-table tbody td,
+    .table tbody td,
+    tbody td {
+        font-size: 0.85rem;
+        padding: 10px 6px;
+    }
+
+    .lb-rank,
+    .rank-number {
+        font-size: 1rem !important;
+    }
+
+    .lb-player-name,
+    .player-name {
+        font-size: 0.9rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .leaderboard-table thead th,
+    .table thead th,
+    thead th {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+
+    .leaderboard-table tbody td,
+    .table tbody td,
+    tbody td {
+        font-size: 0.8rem;
+        padding: 8px 4px;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.25em 0.5em;
+    }
+}

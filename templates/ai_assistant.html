@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block title %}AI Sports Assistant{% endblock %}
+{% block content %}
+<div class="container-fluid px-4" style="max-width: 900px; margin: 0 auto;">
+    <div class="dashboard-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="text-white mb-1">
+                    <i class="bi bi-robot text-success me-2"></i>AI Sports Assistant
+                </h2>
+                <p class="text-white mb-0">Ask anything about sports, matches, leaderboard, or platform usage.</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline-light">
+                    <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-dark border-secondary mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <h5 class="text-white mb-0"><i class="bi bi-robot text-success me-2"></i>AI Sports Assistant</h5>
+                <span class="badge bg-success"
+                    title="This assistant works offline using a built-in sports knowledge base.">Demo AI Mode</span>
+            </div>
+
+            <div id="ai-chat-history" class="ai-chat-history">
+                <div class="ai-message ai-bot">
+                    <div class="ai-avatar"><i class="bi bi-robot"></i></div>
+                    <div class="ai-bubble">
+                        Hello! I'm your Sports Buddy AI assistant. How can I help you today?
+                    </div>
+                </div>
+            </div>
+
+            <div id="ai-loading" class="d-none text-center py-3">
+                <div class="spinner-border text-success" role="status"></div>
+                <p class="text-white-50 mt-2">Thinking...</p>
+            </div>
+
+            <div id="ai-suggestions" class="mt-3 d-flex flex-wrap gap-2">
+                <!-- Suggested question chips will be rendered here -->
+            </div>
+
+            <form id="ai-chat-form" class="mt-3">
+                <div class="input-group">
+                    <input type="text" id="ai-user-message" class="form-control bg-dark text-white border-secondary"
+                        placeholder="Type your question here..." required autocomplete="off">
+                    <button class="btn btn-success" type="submit">
+                        <i class="bi bi-send me-1"></i>Send
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+    .ai-chat-history {
+        max-height: 55vh;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .ai-message {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .ai-message.ai-user {
+        flex-direction: row-reverse;
+    }
+
+    .ai-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .ai-bot .ai-avatar {
+        background: #198754;
+        color: #fff;
+    }
+
+    .ai-user .ai-avatar {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    .ai-bubble {
+        max-width: 75%;
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+
+    .ai-bot .ai-bubble {
+        background: #212529;
+        color: #f8f9fa;
+        border-top-left-radius: 2px;
+    }
+
+    .ai-user .ai-bubble {
+        background: #0d6efd;
+        color: #fff;
+        border-top-right-radius: 2px;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('ai-chat-form');
+        const input = document.getElementById('ai-user-message');
+        const historyDiv = document.getElementById('ai-chat-history');
+        const loading = document.getElementById('ai-loading');
+
+        function appendMessage(role, text) {
+            const div = document.createElement('div');
+            div.className = 'ai-message ' + (role === 'user' ? 'ai-user' : 'ai-bot');
+            div.innerHTML = `
+            <div class="ai-avatar"><i class="bi bi-${role === 'user' ? 'person-fill' : 'robot'}"></i></div>
+            <div class="ai-bubble">${escapeHtml(text)}</div>
+        `;
+            historyDiv.appendChild(div);
+            historyDiv.scrollTop = historyDiv.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function renderSuggestions(suggestions) {
+            const container = document.getElementById('ai-suggestions');
+            if (!container || !suggestions || !suggestions.length) return;
+            container.innerHTML = '';
+            suggestions.forEach(function (q) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-outline-light btn-sm';
+                btn.textContent = q;
+                btn.addEventListener('click', function () {
+                    input.value = q;
+                    form.dispatchEvent(new Event('submit'));
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        // Load initial suggestions
+        fetch('/api/ai-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: '__suggestions_only__' })
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.suggestions) renderSuggestions(data.suggestions);
+            })
+            .catch(function () {
+                // ignore initial suggestions load error
+            });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const text = input.value.trim();
+            if (!text) return;
+
+            appendMessage('user', text);
+            input.value = '';
+            loading.classList.remove('d-none');
+
+            fetch('/api/ai-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    loading.classList.add('d-none');
+                    if (data.success && data.reply) {
+                        appendMessage('bot', data.reply);
+                        if (data.suggestions) renderSuggestions(data.suggestions);
+                    } else {
+                        appendMessage('bot', 'Sorry, I could not answer that right now.');
+                    }
+                })
+                .catch(function () {
+                    loading.classList.add('d-none');
+                    appendMessage('bot', 'Network error. Please try again.');
+                });
+        });
+    });
+</script>
+{% endblock %}

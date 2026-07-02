@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Create Match{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark text-light border-secondary">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="bi bi-plus-circle-fill text-success me-2"></i>Create New Match</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('dashboard.create_match') }}">
+                        <!-- Sport Type (indoor / outdoor) -->
+                        <div class="mb-3">
+                            <label for="sport_type" class="form-label">Sport Type</label>
+                            <select class="form-select" name="sport_type" id="sport_type" required>
+                                <option value="">-- Select Type --</option>
+                                <option value="indoor">Indoor</option>
+                                <option value="outdoor">Outdoor</option>
+                            </select>
+                        </div>
+
+                        <!-- Sport Name -->
+                        <div class="mb-3">
+                            <label for="sport_name" class="form-label">Sport Name</label>
+                            <input type="text" class="form-control" name="sport_name" id="sport_name"
+                                placeholder="e.g. Cricket, Football, Badminton" required>
+                        </div>
+
+                        <!-- Match Date -->
+                        <div class="mb-3">
+                            <label for="match_date" class="form-label">Match Date</label>
+                            <input type="date" class="form-control" name="match_date" id="match_date" required>
+                        </div>
+
+                        <!-- Match Time -->
+                        <div class="mb-3">
+                            <label for="match_time" class="form-label">Match Time</label>
+                            <input type="time" class="form-control" name="match_time" id="match_time" required>
+                        </div>
+
+                        <!-- Venue / Location -->
+                        <div class="mb-3">
+                            <label for="venue_name" class="form-label">Venue</label>
+                            <input type="text" class="form-control" name="venue_name" id="venue_name"
+                                placeholder="e.g. City Stadium" required>
+                        </div>
+
+                        <!-- Max Players -->
+                        <div class="mb-3">
+                            <label for="max_players" class="form-label">Max Players</label>
+                            <input type="number" class="form-control" name="max_players" id="max_players" min="2"
+                                max="50" value="10" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-lg me-1"></i>Create Match
+                            </button>
+                            <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

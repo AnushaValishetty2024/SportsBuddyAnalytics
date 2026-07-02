@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Buddy - Find Your Match</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Leaflet CSS - OpenStreetMap (no API key required) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header>
+            <h1>🏆 Sports Buddy</h1>
+            <p class="subtitle">Find and join sports matches near you</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <a href="leaderboard.html" class="btn btn-primary" style="width:auto;margin-top:0;">🏆 View Leaderboard</a>
+        </nav>
+
+        <main>
+            <!-- User Selector -->
+            <section class="user-section">
+                <div class="user-selector">
+                    <label for="userSelect">Playing as:</label>
+                    <select id="userSelect">
+                        <option value="1">Anusha</option>
+                        <option value="2">Rahul</option>
+                        <option value="3">Sneha</option>
+                        <option value="4">Kiran</option>
+                    </select>
+                    <span id="locationStatus" class="location-status">📍 Locating...</span>
+                </div>
+            </section>
+
+            <!-- Tab Navigation -->
+            <nav class="tab-nav" id="tabNav">
+                <button class="tab-btn active" data-tab="matches" onclick="switchTab('matches')">🏏 Matches</button>
+                <button class="tab-btn" data-tab="buddies" onclick="switchTab('buddies')">👥 Buddies</button>
+                <button class="tab-btn" data-tab="discover" onclick="switchTab('discover')">🔍 Discover</button>
+                <button class="tab-btn" data-tab="map" onclick="switchTab('map')">🗺️ Map</button>
+                <button class="tab-btn" data-tab="venues" onclick="switchTab('venues')">🏟️ Venues</button>
+                <button class="tab-btn" data-tab="teams" onclick="switchTab('teams')">👨‍👩‍👧‍👦 Teams</button>
+            </nav>
+
+            <!-- ============ TAB 1: MATCHES ============ -->
+            <div id="tabMatches" class="tab-content active">
+                <!-- Sport Icon Dashboard -->
+                <section class="sport-dashboard-section">
+                    <h2>Choose a Sport</h2>
+                    <div id="sportDashboard" class="sport-dashboard">
+                        <!-- Sport icon cards rendered by JS -->
+                    </div>
+                </section>
+
+                <!-- Create Match Section -->
+                <section class="create-match-section" id="createMatchSection">
+                    <h2>Create a New Match</h2>
+                    <form id="createMatchForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sport_name">Sport Name</label>
+                                <input type="text" id="sport_name" name="sport_name" placeholder="e.g. Cricket, Tennis"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sport_type">Sport Type</label>
+                                <select id="sport_type" name="sport_type" required>
+                                    <option value="outdoor">Outdoor</option>
+                                    <option value="indoor">Indoor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="max_players">Max Players</label>
+                                <input type="number" id="max_players" name="max_players" min="2" max="50" value="10"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="match_date">Match Date</label>
+                                <input type="date" id="match_date" name="match_date" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="match_time">Match Time</label>
+                                <input type="time" id="match_time" name="match_time" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="venue_name">Venue</label>
+                                <input type="text" id="venue_name" name="venue_name" placeholder="e.g. City Stadium"
+                                    required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Match</button>
+                    </form>
+                    <div id="createMessage" class="message"></div>
+                </section>
+
+                <!-- Match List Section -->
+                <section class="matches-section" id="matchesSection">
+                    <div class="matches-header">
+                        <h2 id="matchesTitle">All Matches</h2>
+                        <button id="backToSportsBtn" class="btn btn-back" style="display:none;">← Back to
+                            Sports</button>
+                    </div>
+                    <div id="matchList" class="match-list">
+                        <p class="loading">Loading matches...</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ TAB 2: BUDDIES ============ -->
+            <div id="tabBuddies" class="tab-content">
+                <!-- Friend Requests (Incoming) -->
+                <section class="buddy-section">
+                    <h2>📩 Friend Requests</h2>
+                    <div id="friendRequestsList" class="buddy-list">
+                        <p class="loading">Loading requests...</p>
+                    </div>
+                </section>
+
+                <!-- Friends List -->
+                <section class="buddy-section">
+                    <h2>👥 Your Friends</h2>
+                    <div id="friendsList" class="buddy-list">
+                        <p class="loading">Loading friends...</p>
+                    </div>
+                </section>
+
+                <!-- Outgoing Requests -->
+                <section class="buddy-section">
+                    <h2>📤 Sent Requests</h2>
+                    <div id="outgoingRequestsList" class="buddy-list">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ TAB 3: DISCOVER ============ -->
+            <div id="tabDiscover" class="tab-content">
+                <!-- Player Discovery -->
+                <section class="discover-section">
+                    <h2>🔍 Discover Players</h2>
+                    <div class="discover-filters">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="discoverSport">Sport Type</label>
+                                <select id="discoverSport">
+                                    <option value="">All Sports</option>
+                                    <option value="outdoor">Outdoor</option>
+                                    <option value="indoor">Indoor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="discoverDistance">Max Distance (km)</label>
+                                <input type="number" id="discoverDistance" value="50" min="1" max="500">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="discoverPlayers()">Find Players</button>
+                    </div>
+                    <div id="discoverPlayersList" class="buddy-list">
+                        <p class="no-matches">Set filters and click "Find Players"</p>
+                    </div>
+                </section>
+
+                <!-- Match Discovery -->
+                <section class="discover-section">
+                    <h2>🎯 Discover Matches</h2>
+                    <div class="discover-filters">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="filterSportName">Sport</label>
+                                <select id="filterSportName">
+                                    <option value="">All Sports</option>
+                                    <option value="Cricket">🏏 Cricket</option>
+                                    <option value="Football">⚽ Football</option>
+                                    <option value="Basketball">🏀 Basketball</option>
+                                    <option value="Kabaddi">🛡️ Kabaddi</option>
+                                    <option value="Tennis">🎾 Tennis</option>
+                                    <option value="Hockey">🏑 Hockey</option>
+                                    <option value="Cycling">🚴 Cycling</option>
+                                    <option value="Running">🏃 Running</option>
+                                    <option value="Badminton">🏸 Badminton</option>
+                                    <option value="Table Tennis">🏓 Table Tennis</option>
+                                    <option value="Chess">♟️ Chess</option>
+                                    <option value="Carrom">🎯 Carrom</option>
+                                    <option value="Snooker">🎱 Snooker</option>
+                                    <option value="Squash">🏐 Squash</option>
+                                    <option value="Gym">💪 Gym</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="filterSportType">Indoor/Outdoor</label>
+                                <select id="filterSportType">
+                                    <option value="">Both</option>
+                                    <option value="outdoor">Outdoor</option>
+                                    <option value="indoor">Indoor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="filterDistance">Max Distance (km)</label>
+                                <input type="number" id="filterDistance" value="50" min="1" max="500">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="discoverMatches()">Find Matches</button>
+                    </div>
+                    <div id="discoverMatchesList" class="match-list">
+                        <p class="no-matches">Set filters and click "Find Matches"</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ TAB 4: MAP (Leaflet/OpenStreetMap) ============ -->
+            <div id="tabMap" class="tab-content">
+                <section class="map-section">
+                    <h2>🗺️ Match Map</h2>
+                    <p class="map-subtitle">See all matches plotted on the map</p>
+                    <div id="mapContainer" class="map-container">
+                        <div id="mapLoading" class="loading">Loading map...</div>
+                        <div id="map" style="width:100%;height:100%;"></div>
+                    </div>
+                    <div id="mapInfo" class="map-info"></div>
+                </section>
+            </div>
+
+            <!-- ============ TAB 6: TEAMS ============ -->
+            <div id="tabTeams" class="tab-content">
+                <!-- Teams Section -->
+                <section class="teams-section">
+                    <div class="teams-header">
+                        <h2>Teams</h2>
+                        <a href="teams.php" class="btn btn-primary">View All Teams</a>
+                    </div>
+                    <p>Join a team or create your own to play with others!</p>
+                    <div id="teamsPreviewList" class="teams-list">
+                        <p class="loading">Loading teams...</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============ TAB 5: NEARBY VENUES ============ -->
+            <div id="tabVenues" class="tab-content">
+                <section class="venues-section">
+                    <h2>🏟️ Nearby Sports Venues</h2>
+                    <p class="map-subtitle">Explore sports venues near you in Andhra Pradesh</p>
+
+                    <!-- Sport Filter -->
+                    <div class="venues-filters">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="venueSportFilter">Filter by Sport</label>
+                                <select id="venueSportFilter" onchange="filterVenues()">
+                                    <option value="">All Sports</option>
+                                    <option value="Cricket">🏏 Cricket</option>
+                                    <option value="Football">⚽ Football</option>
+                                    <option value="Basketball">🏀 Basketball</option>
+                                    <option value="Badminton">🏸 Badminton</option>
+                                    <option value="Tennis">🎾 Tennis</option>
+                                    <option value="Volleyball">🏐 Volleyball</option>
+                                    <option value="Swimming">🏊 Swimming</option>
+                                    <option value="Athletics Track">🏃 Athletics Track</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Venues Map -->
+                    <div id="venuesMapContainer" class="map-container">
+                        <div id="venuesMapLoading" class="loading">Loading venues map...</div>
+                        <div id="venuesMap" style="width:100%;height:100%;"></div>
+                    </div>
+                    <div id="venuesInfo" class="map-info"></div>
+
+                    <!-- Venues List -->
+                    <div id="venuesList" class="venues-list">
+                        <p class="loading">Loading nearby venues...</p>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Match Details Modal -->
+    <div id="matchDetailsModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Match Details</h2>
+                <button id="modalCloseBtn" class="modal-close">&times;</button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JavaScript - OpenStreetMap library (no API key required) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

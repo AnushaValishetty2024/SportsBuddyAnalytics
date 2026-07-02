@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'followers' %}Followers{% else %}Following{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    {% if mode == 'followers' %}
+                    <i class="bi bi-people me-2"></i>Followers
+                    {% else %}
+                    <i class="bi bi-person-check me-2"></i>Following
+                    {% endif %}
+                </h5>
+                <div>
+                    <a href="{{ url_for('social.followers_page') }}"
+                        class="btn btn-sm {% if mode == 'followers' %}btn-primary{% else %}btn-outline-primary{% endif %} me-1">
+                        Followers ({{ followers_count }})
+                    </a>
+                    <a href="{{ url_for('social.following_page') }}"
+                        class="btn btn-sm {% if mode == 'following' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        Following ({{ following_count }})
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if mode == 'followers' %}
+                {% if followers %}
+                <div class="list-group">
+                    {% for follower in followers %}
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="{{ url_for('social.profile_page', user_id=follower.id) }}"
+                                    class="text-decoration-none">
+                                    <h6 class="mb-1">{{ follower.name }}</h6>
+                                </a>
+                                <small class="text-muted">{{ follower.email }}</small>
+                            </div>
+                            <small class="text-muted">Following since {{ follower.followed_at.strftime('%b %d, %Y') if
+                                follower.followed_at else 'N/A' }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4">No followers yet. Start playing and engaging to attract
+                    followers!</p>
+                {% endif %}
+                {% else %}
+                {% if following %}
+                <div class="list-group">
+                    {% for user in following %}
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="{{ url_for('social.profile_page', user_id=user.id) }}"
+                                    class="text-decoration-none">
+                                    <h6 class="mb-1">{{ user.name }}</h6>
+                                </a>
+                                <small class="text-muted">{{ user.email }}</small>
+                            </div>
+                            <div>
+                                <form action="{{ url_for('social.api_unfollow', user_id=user.id) }}" method="POST"
+                                    class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-person-x me-1"></i>Unfollow
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4">You're not following anyone yet. Explore profiles and follow
+                    players!</p>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

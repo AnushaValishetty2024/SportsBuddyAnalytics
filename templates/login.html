@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-box-arrow-in-right display-4 text-success"></i>
+                    <h3 class="fw-bold mt-2 text-white">Welcome Back</h3>
+                    <p class="text-light opacity-75">Sign in to your account</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-light fw-semibold">
+                            <i class="bi bi-envelope-fill me-1 text-success"></i>Email Address
+                        </label>
+                        <input type="email" class="form-control form-control-lg bg-dark text-light border-secondary"
+                            id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label text-light fw-semibold">
+                            <i class="bi bi-lock-fill me-1 text-success"></i>Password
+                        </label>
+                        <input type="password" class="form-control form-control-lg bg-dark text-light border-secondary"
+                            id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 btn-lg fw-semibold mb-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-light opacity-75 mb-0">
+                            Don't have an account?
+                            <a href="{{ url_for('auth.register') }}"
+                                class="text-success text-decoration-none fw-semibold">
+                                Register here
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

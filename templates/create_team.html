@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Create Team - Sports Buddy{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h1 class="text-white mb-4">Create Team</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <div class="form-group mb-3">
+            <label for="team_name" class="text-white fw-bold mb-2">Team Name</label>
+            <input type="text" class="form-control" id="team_name" name="team_name" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="description" class="text-white fw-bold mb-2">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="sport_type" class="text-white fw-bold mb-2">Sport Type</label>
+            <select class="form-control" id="sport_type" name="sport_type" required>
+                <option value="">Select Sport</option>
+                <option>Cricket</option>
+                <option>Football</option>
+                <option>Basketball</option>
+                <option>Volleyball</option>
+                <option>Tennis</option>
+                <option>Badminton</option>
+                <option>Hockey</option>
+                <option>Kabaddi</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="location" class="text-white fw-bold mb-2">Location</label>
+            <input type="text" class="form-control" id="location" name="location" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="max_members" class="text-white fw-bold mb-2">Max Members</label>
+            <input type="number" class="form-control" id="max_members" name="max_members" value="10" min="2" max="50">
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="logo" class="text-white fw-bold mb-2">Team Logo</label>
+            <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Team</button>
+        <a href="{{ url_for('team.teams') }}" class="btn btn-secondary">Cancel</a>
+
+    </form>
+
+</div>
+{% endblock %}

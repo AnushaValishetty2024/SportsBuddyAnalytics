@@ -1,0 +1,704 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-4 dashboard-container">
+
+    <!-- ============================================================ -->
+    <!-- MODULE 1: DASHBOARD HEADER -->
+    <!-- ============================================================ -->
+    <div class="dashboard-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="text-white mb-1">
+                    <i class="bi bi-speedometer2 text-success me-2"></i>Welcome back, {{ user.name }}
+                </h2>
+                <p class="text-white mb-0">
+                    <i class="bi bi-calendar3 me-1"></i>Dashboard Overview
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('dashboard.create_match') }}" class="btn btn-success me-2">
+                    <i class="bi bi-plus-circle me-1"></i>Create Match
+                </a>
+                <button class="btn btn-outline-info me-2" onclick="scrollToSection('discover-section')">
+                    <i class="bi bi-search me-1"></i>Find Matches
+                </button>
+                <button class="btn btn-outline-warning" onclick="scrollToSection('map-section')">
+                    <i class="bi bi-geo-alt me-1"></i>View Map
+                </button>
+                <a href="{{ url_for('team.teams') }}" class="btn btn-outline-light">
+                    <i class="bi bi-people me-1"></i>Teams
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Stats Row -->
+        <div class="row mt-3 g-3">
+            <div class="col-6 col-md-3">
+                <div class="stat-card bg-dark border-success">
+                    <div class="stat-icon text-success"><i class="bi bi-trophy"></i></div>
+                    <div class="stat-value text-white">{{ upcoming_matches|length }}</div>
+                    <div class="stat-label text-white">Upcoming Matches</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card bg-dark border-warning">
+                    <div class="stat-icon text-warning"><i class="bi bi-building"></i></div>
+                    <div class="stat-value text-white">{{ nearby_businesses|length }}</div>
+                    <div class="stat-label text-white">Nearby Venues</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card bg-dark border-info">
+                    <div class="stat-icon text-info"><i class="bi bi-grid-3x3-gap"></i></div>
+                    <div class="stat-value text-white">{{ total_games }}</div>
+                    <div class="stat-label text-white">Total Games</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card bg-dark border-success">
+                    <div class="stat-icon text-success"><i class="bi bi-people"></i></div>
+                    <div class="stat-value text-white">{{ user_team_count|default(0) }}</div>
+                    <div class="stat-label text-white">My Teams</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people text-success" style="font-size: 2.5rem;"></i>
+                        <h5 class="text-white mt-3">Teams</h5>
+                        <p class="text-white small">View and Manage Teams</p>
+                        <a href="{{ url_for('team.teams') }}" class="btn btn-success btn-sm w-100">
+                            <i class="bi bi-arrow-right me-1"></i>Open Teams
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-speedometer2 text-info" style="font-size: 2.5rem;"></i>
+                        <h5 class="text-white mt-3">Global Leaderboard</h5>
+                        <p class="text-white small">View Rankings</p>
+                        <a href="{{ url_for('dashboard.leaderboard_page') }}" class="btn btn-info btn-sm w-100">
+                            <i class="bi bi-trophy me-1"></i>Open Leaderboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-trophy-fill text-warning" style="font-size: 2.5rem;"></i>
+                        <h5 class="text-white mt-3">Team Leaderboard</h5>
+                        <p class="text-white small">View Rankings</p>
+                        <a href="{{ url_for('team.team_leaderboard') }}" class="btn btn-warning btn-sm w-100">
+                            <i class="bi bi-arrow-right me-1"></i>Open Leaderboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Badges -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="card bg-dark border-warning">
+                    <div class="card-header border-warning">
+                        <h6 class="mb-0 text-warning"><i class="bi bi-trophy-fill me-2"></i>My Badges & Achievements
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% if user_badges %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for badge in user_badges %}
+                            <span class="badge bg-dark border-warning p-2" title="{{ badge.description }}">
+                                <i class="bi {{ badge.icon }} text-warning me-1"></i>{{ badge.badge_name }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-white-50 small mb-0">No badges earned yet. Keep playing to earn badges!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODULE 2: UPCOMING MATCHES SECTION -->
+    <!-- ============================================================ -->
+    <section id="matches-section" class="dashboard-section mb-4">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-white mb-0">
+                <i class="bi bi-calendar-event text-success me-2"></i>Upcoming Matches
+            </h4>
+            <button class="btn btn-sm btn-outline-success" onclick="scrollToSection('discover-section')">
+                View All <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+        </div>
+
+        {% if upcoming_matches %}
+        <div class="row g-3 matches-grid">
+            {% for match in upcoming_matches %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card match-card h-100" data-match-id="{{ match.id }}">
+                    <div class="card-body d-flex flex-column p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span
+                                class="badge bg-{{ 'success' if match.sport_type == 'outdoor' else 'info' }} bg-opacity-75">
+                                <i
+                                    class="bi bi-{{ 'sun' if match.sport_type == 'outdoor' else 'house-door' }} me-1"></i>
+                                {{ match.sport_type|capitalize }}
+                            </span>
+                            <span class="badge bg-dark border border-secondary">
+                                <i class="bi bi-people me-1"></i>{{ match.get('player_count', 0) }}/{{ match.max_players
+                                }}
+                            </span>
+                        </div>
+                        <h5 class="card-title text-white mb-2">
+                            <i class="bi bi-trophy text-warning me-1"></i>{{ match.sport_name }}
+                        </h5>
+                        <div class="match-details small flex-grow-1">
+                            <div class="mb-1 text-white"><i class="bi bi-geo-alt text-danger me-1"></i>{{
+                                match.venue_name }}</div>
+                            <div class="mb-1 text-white"><i class="bi bi-calendar-date text-primary me-1"></i>{{
+                                match.match_date }}</div>
+                            <div class="mb-1 text-white"><i class="bi bi-clock text-info me-1"></i>{{ match.match_time
+                                }}</div>
+                            <div class="text-white"><i class="bi bi-person-circle me-1"></i>{{ match.creator_name }}
+                            </div>
+                        </div>
+                        <div class="mt-3 d-flex gap-2">
+                            {% if match.id in user_joined_matches %}
+                            <button class="btn btn-sm btn-success flex-grow-1" disabled><i
+                                    class="bi bi-check-circle me-1"></i>Joined</button>
+                            {% elif match.get('player_count', 0) >= match.max_players %}
+                            <button class="btn btn-sm btn-secondary flex-grow-1" disabled><i
+                                    class="bi bi-x-circle me-1"></i>Full</button>
+                            {% else %}
+                            <button class="btn btn-sm btn-outline-success flex-grow-1 join-match-btn"
+                                data-match-id="{{ match.id }}" data-bs-toggle="modal"
+                                data-bs-target="#joinConfirmModal">
+                                <i class="bi bi-hand-index-thumb me-1"></i>Join Match
+                            </button>
+                            {% endif %}
+                            <button class="btn btn-sm btn-outline-info match-chat-btn" data-match-id="{{ match.id }}"
+                                data-match-name="{{ match.sport_name }}">
+                                <i class="bi bi-chat-dots"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state text-center py-5">
+            <i class="bi bi-calendar-event text-white" style="font-size: 3rem;"></i>
+            <h5 class="text-white mt-3">No upcoming matches</h5>
+            <p class="text-white small">Create a match or discover matches to join</p>
+            <a href="{{ url_for('dashboard.create_match') }}" class="btn btn-success btn-sm mt-2">
+                <i class="bi bi-plus-circle me-1"></i>Create Match
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- MODULE 3: DISCOVER MATCHES SECTION -->
+    <!-- ============================================================ -->
+    <section id="discover-section" class="dashboard-section mb-4">
+        <div class="section-header mb-3">
+            <h4 class="text-white mb-0"><i class="bi bi-search text-info me-2"></i>Discover Matches</h4>
+            <p class="text-white small mb-0">Filter matches by sport, location, or date</p>
+        </div>
+        <div class="discover-filters bg-dark border border-secondary rounded p-3 mb-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label text-light small mb-1">Sport Type</label>
+                    <select id="filter-sport" class="form-select form-select-sm">
+                        <option value="">All Sports</option>
+                        {% for sport in sport_list %}<option value="{{ sport }}">{{ sport }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-light small mb-1">Location</label>
+                    <input type="text" id="filter-location" class="form-control form-control-sm"
+                        placeholder="Enter location...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-light small mb-1">Date</label>
+                    <input type="date" id="filter-date" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-2">
+                    <button id="filter-apply-btn" class="btn btn-info btn-sm w-100"><i
+                            class="bi bi-funnel me-1"></i>Filter</button>
+                </div>
+            </div>
+        </div>
+        <div id="discover-results" class="row g-3">
+            <div class="col-12 text-center py-4 text-white">
+                <i class="bi bi-arrow-up-circle" style="font-size: 2rem;"></i>
+                <p class="mt-2 text-white">Use filters above to discover matches</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- MODULE 5: MAP SECTION -->
+    <!-- ============================================================ -->
+    <section id="map-section" class="dashboard-section mb-4">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-white mb-0"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Match Map</h4>
+            <div>
+                <button class="btn btn-sm btn-outline-light me-1 map-toggle active" data-layer="matches"><i
+                        class="bi bi-trophy me-1"></i>Matches</button>
+                <button class="btn btn-sm btn-outline-light map-toggle" data-layer="businesses"><i
+                        class="bi bi-building me-1"></i>Venues</button>
+            </div>
+        </div>
+        <div class="map-container rounded overflow-hidden border border-secondary">
+            <div id="dashboard-map" style="height: 400px; width: 100%;"></div>
+        </div>
+        <div class="map-legend text-white small mt-2 d-flex gap-3">
+            <span><i class="bi bi-circle-fill text-success me-1" style="font-size: 0.6rem;"></i>Match Locations</span>
+            <span><i class="bi bi-circle-fill text-warning me-1" style="font-size: 0.6rem;"></i>Sports Venues</span>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- MODULE 6: NEARBY BUSINESSES SECTION -->
+    <!-- ============================================================ -->
+    <section id="businesses-section" class="dashboard-section mb-4">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-white mb-0"><i class="bi bi-building text-primary me-2"></i>Nearby Sports Venues</h4>
+            <span class="badge bg-primary">{{ nearby_businesses|length }} venues</span>
+        </div>
+        {% if nearby_businesses %}
+        <div class="row g-3">
+            {% for business in nearby_businesses %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card business-card h-100">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-success bg-opacity-75">
+                                <i class="bi bi-building me-1"></i> {{ business.business_type|replace('_', ' ')|title }}
+                            </span>
+                            {% if business.rating %}
+                            <span class="badge bg-warning text-white"><i class="bi bi-star-fill me-1"></i>{{
+                                business.rating }}</span>
+                            {% endif %}
+                        </div>
+                        <h6 class="text-white mb-1">{{ business.name }}</h6>
+                        <p class="text-white small mb-2">{{ business.description|truncate(60) }}</p>
+                        <div class="small text-white mb-2"><i class="bi bi-geo-alt me-1"></i>{{
+                            business.address|truncate(40) }}</div>
+                        {% if business.sport_types %}
+                        <div class="sport-tags">
+                            {% for sport in business.sport_types %}
+                            <span class="badge bg-dark border border-secondary me-1">{{ sport|trim|capitalize }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state text-center py-4">
+            <i class="bi bi-building text-white" style="font-size: 2.5rem;"></i>
+            <p class="text-white mt-2">No nearby venues added yet.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ANALYTICS DASHBOARD SECTION -->
+    <!-- ============================================================ -->
+    <section id="analytics-section" class="dashboard-section mb-4">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-white mb-0"><i class="bi bi-graph-up-arrow text-success me-2"></i>Analytics</h4>
+        </div>
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3">
+                <div class="stat-card bg-dark border-success">
+                    <div class="stat-icon text-success"><i class="bi bi-people-fill"></i></div>
+                    <div class="stat-value text-white" id="kpi-total-users">0</div>
+                    <div class="stat-label text-white">Total Users</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card bg-dark border-info">
+                    <div class="stat-icon text-info"><i class="bi bi-activity"></i></div>
+                    <div class="stat-value text-white" id="kpi-active-users">0</div>
+                    <div class="stat-label text-white">Active Users</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card bg-dark border-warning">
+                    <div class="stat-icon text-warning"><i class="bi bi-calendar-check"></i></div>
+                    <div class="stat-value text-white" id="kpi-matches-today">0</div>
+                    <div class="stat-label text-white">Matches Today</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card bg-dark border-primary">
+                    <div class="stat-icon text-primary"><i class="bi bi-building"></i></div>
+                    <div class="stat-value text-white" id="kpi-nearby-venues">0</div>
+                    <div class="stat-label text-white">Nearby Venues</div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-lg-4 col-md-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 260px;"><canvas id="chart-top-players"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 260px;"><canvas id="chart-match-activity"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 260px;"><canvas
+                                id="chart-sports-distribution"></canvas></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 260px;"><canvas id="chart-indoor-outdoor"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-12">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 280px;"><canvas id="chart-weekly-trend"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-2">
+            <button class="btn btn-sm btn-outline-light" onclick="window.fetchAnalyticsData()">
+                <i class="bi bi-arrow-clockwise me-1"></i>Refresh Charts
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ALL SPORTS SECTION -->
+    <!-- ============================================================ -->
+    <section id="sports-section" class="dashboard-section mb-4">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-white mb-0"><i class="bi bi-grid text-warning me-2"></i>All Sports</h4>
+            <div>
+                <span class="text-white-50 small me-3"><i class="bi bi-info-circle me-1"></i>Click a sport for
+                    details</span>
+                <button class="btn btn-sm btn-outline-light" onclick="scrollToSection('games-section')">
+                    <i class="bi bi-grid-3x3-gap me-1"></i>All Games
+                </button>
+            </div>
+        </div>
+        <div class="mb-3">
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-success sports-filter-btn active" data-filter="all"><i
+                        class="bi bi-grid me-1"></i>All Sports</button>
+                <button type="button" class="btn btn-outline-success sports-filter-btn" data-filter="outdoor"><i
+                        class="bi bi-sun me-1"></i>Outdoor</button>
+                <button type="button" class="btn btn-outline-success sports-filter-btn" data-filter="indoor"><i
+                        class="bi bi-house-door me-1"></i>Indoor</button>
+            </div>
+        </div>
+        <div id="sports-categories-container" class="row g-3">
+            <div id="sports-loading" class="col-12 text-center py-5">
+                <div class="spinner-border text-warning" role="status"><span class="visually-hidden">Loading
+                        sports...</span></div>
+                <p class="text-white mt-3">Loading sports...</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- SPORT DETAIL MODAL -->
+<div class="modal fade" id="sportDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content bg-dark border-warning">
+            <div class="modal-header border-warning">
+                <div class="d-flex align-items-center">
+                    <div id="sport-modal-icon" class="me-3" style="width: 56px; height: 56px;"></div>
+                    <div>
+                        <h5 class="modal-title text-white mb-0" id="sportDetailModalLabel">Sport Details</h5>
+                        <small id="sport-modal-subtitle" class="text-white-50">Loading...</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="sport-details-loading" class="text-center py-4">
+                    <div class="spinner-border text-warning" role="status"><span
+                            class="visually-hidden">Loading...</span></div>
+                    <p class="text-white mt-2">Fetching sport details...</p>
+                </div>
+                <div id="sport-details-error" class="d-none text-center py-5">
+                    <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                    <h5 class="text-white mt-3">Unable to load sport details.</h5>
+                    <p class="text-white-50">Please try again later.</p>
+                </div>
+                <div id="sport-details-content" class="d-none">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="mb-3">
+                                <h3 id="sport-detail-name" class="text-white mb-1"></h3>
+                                <div class="d-flex gap-2">
+                                    <span id="sport-detail-badge" class="badge bg-success"></span>
+                                    <span id="sport-detail-difficulty" class="badge bg-warning text-dark"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-warning mb-1"><i class="bi bi-info-circle me-1"></i>Description</h6>
+                                <p id="sport-detail-description" class="text-white small" style="line-height: 1.6;"></p>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="bg-dark border border-secondary rounded p-2 text-center">
+                                        <div class="text-warning small"><i class="bi bi-people me-1"></i>Players</div>
+                                        <div id="sport-detail-players" class="text-white small"></div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark border border-secondary rounded p-2 text-center">
+                                        <div class="text-warning small"><i class="bi bi-clock me-1"></i>Duration</div>
+                                        <div id="sport-detail-duration" class="text-white small"></div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark border border-secondary rounded p-2 text-center">
+                                        <div class="text-warning small"><i class="bi bi-geo-alt me-1"></i>Playing Area
+                                        </div>
+                                        <div id="sport-detail-area" class="text-white small"></div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark border border-secondary rounded p-2 text-center">
+                                        <div class="text-warning small"><i class="bi bi-tools me-1"></i>Equipment</div>
+                                        <div id="sport-detail-equipment" class="text-white small"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="mb-3 bg-dark border border-secondary rounded p-3">
+                                <h6 class="text-info mb-2"><i class="bi bi-book me-1"></i>Basic Rules</h6>
+                                <p id="sport-detail-rules" class="text-white small mb-0" style="line-height: 1.6;"></p>
+                            </div>
+                            <div class="mb-3 bg-dark border border-secondary rounded p-3">
+                                <h6 class="text-primary mb-2"><i class="bi bi-trophy me-1"></i>Popular Tournaments</h6>
+                                <p id="sport-detail-tournaments" class="text-white small mb-0"></p>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="bg-dark border border-secondary rounded p-2 text-center">
+                                        <div class="text-success"><i class="bi bi-building"
+                                                style="font-size:1.4rem;"></i></div>
+                                        <div id="sport-detail-venue-count" class="text-white small fw-bold"></div>
+                                        <div class="text-white-50 small">Nearby Venues</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark border border-secondary rounded p-2 text-center">
+                                        <div class="text-info"><i class="bi bi-calendar-event"
+                                                style="font-size:1.4rem;"></i></div>
+                                        <div id="sport-detail-match-count" class="text-white small fw-bold"></div>
+                                        <div class="text-white-50 small">Active Matches</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="sport-detail-matches-section"
+                                class="mb-3 bg-dark border border-secondary rounded p-3">
+                                <h6 class="text-success mb-2"><i class="bi bi-calendar-check me-1"></i>Upcoming Matches
+                                </h6>
+                                <div id="sport-detail-matches-list" class="text-white small"></div>
+                            </div>
+                            <div id="sport-detail-venues-section" class="bg-dark border border-secondary rounded p-3">
+                                <h6 class="text-success mb-2"><i class="bi bi-geo-alt-fill me-1"></i>Nearby Venues</h6>
+                                <div id="sport-detail-venues-list" class="text-white small"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-warning">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                        class="bi bi-x-circle me-1"></i>Close</button>
+                <button id="sport-detail-join-match" type="button" class="btn btn-success d-none"><i
+                        class="bi bi-hand-index-thumb me-1"></i>Join Match</button>
+                <button id="sport-detail-find-matches" type="button" class="btn btn-outline-info"><i
+                        class="bi bi-search me-1"></i>Find Matches</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GAME DETAILS MODAL -->
+<div class="modal fade" id="gameDetailsModal" tabindex="-1" aria-labelledby="gameDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <div class="d-flex align-items-center">
+                    <div id="game-modal-icon" class="me-3" style="width: 48px; height: 48px;"></div>
+                    <div>
+                        <h5 class="modal-title text-white mb-0" id="gameDetailsModalLabel">Game Details</h5>
+                        <small id="game-modal-match-count" class="text-white-50">Loading...</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="game-details-loading" class="text-center py-4">
+                    <div class="spinner-border text-success" role="status"><span
+                            class="visually-hidden">Loading...</span></div>
+                    <p class="text-white mt-2">Fetching game details...</p>
+                </div>
+                <div id="game-details-content" class="d-none">
+                    <h4 id="game-detail-name" class="text-white mb-3"><i
+                            class="bi bi-trophy text-warning me-2"></i><span></span></h4>
+                    <div class="mb-4">
+                        <h6 class="text-success mb-2"><i class="bi bi-info-circle me-1"></i>Description</h6>
+                        <p id="game-detail-description" class="text-white mb-0" style="line-height: 1.7;"></p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="text-info mb-2"><i class="bi bi-book me-1"></i>Rules</h6>
+                        <p id="game-detail-rules" class="text-white mb-0" style="line-height: 1.7;"></p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="text-warning mb-2"><i class="bi bi-geo-alt me-1"></i>Location Info</h6>
+                        <p id="game-detail-location" class="text-white mb-0"></p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-primary mb-2"><i class="bi bi-calendar-event me-1"></i>Active Matches</h6>
+                        <p id="game-detail-matches" class="text-white mb-0"></p>
+                    </div>
+                </div>
+                <div id="game-details-no-data" class="d-none text-center py-5">
+                    <i class="bi bi-emoji-frown text-white-50" style="font-size: 3rem;"></i>
+                    <h5 class="text-white mt-3">No detailed information available for this game yet.</h5>
+                    <p class="text-white-50">Check back later for updates.</p>
+                </div>
+                <div id="game-details-error" class="d-none text-center py-5">
+                    <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                    <h5 class="text-white mt-3">Unable to load game details.</h5>
+                    <p class="text-white-50">Please try again later.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                        class="bi bi-x-circle me-1"></i>Close</button>
+                <button id="game-detail-find-matches" type="button" class="btn btn-success"><i
+                        class="bi bi-search me-1"></i>Find Matches</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JOIN MATCH CONFIRMATION MODAL -->
+<div class="modal fade" id="joinConfirmModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h6 class="modal-title text-white"><i class="bi bi-hand-index-thumb text-success me-1"></i>Join Match
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <i class="bi bi-question-circle text-info" style="font-size: 2.5rem;"></i>
+                <p class="text-white mt-2 mb-0">Would you like to join this match?</p>
+            </div>
+            <div class="modal-footer border-secondary justify-content-center">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success btn-sm" id="confirm-join-btn"><i
+                        class="bi bi-check-lg me-1"></i>Yes, Join!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const DASHBOARD_DATA = {
+        matchLocations: JSON.parse('{{ match_locations | tojson if match_locations else "[]" }}'),
+        businessLocations: JSON.parse('{{ business_locations | tojson if match_locations else "[]" }}'),
+        discoverUrl: '{{ url_for("dashboard.api_discover_matches") }}',
+        joinUrl: '{{ url_for("dashboard.api_join_match", match_id=0) }}',
+        mapLocationsUrl: '{{ url_for("dashboard.api_match_locations") }}',
+        mapMatchesUrl: '{{ url_for("dashboard.api_map_matches") }}',
+        mapVenuesUrl: '{{ url_for("dashboard.api_map_venues") }}',
+        userJoinedIds: JSON.parse('{{ user_joined_matches | tojson if user_joined_matches else "[]" }}')
+    };
+</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            if (typeof window.fetchAnalyticsData === 'function') {
+                window.fetchAnalyticsData();
+            }
+        }, 500);
+
+        // Match chat buttons on dashboard
+        document.getElementById('matches-section').addEventListener('click', function (e) {
+            var btn = e.target.closest('.match-chat-btn');
+            if (!btn) return;
+            var matchId = btn.getAttribute('data-match-id');
+            var matchName = btn.getAttribute('data-match-name');
+            if (matchId) {
+                window.location.href = '/match/' + matchId + '/chat';
+            }
+        });
+
+        // Discover section dynamic results also get chat buttons after load
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('.match-chat-btn');
+            if (!btn) return;
+            var matchId = btn.getAttribute('data-match-id');
+            var matchName = btn.getAttribute('data-match-name');
+            if (matchId) {
+                window.location.href = '/match/' + matchId + '/chat';
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <!-- HERO SECTION -->
+    <div class="row min-vh-75 align-items-center">
+        <div class="col-lg-8 mx-auto text-center">
+
+            <div class="hero-section py-5">
+
+                <i class="bi bi-trophy-fill display-1 text-success mb-4 d-block"></i>
+
+                <h1 class="display-3 fw-bold text-white mb-3">
+                    Welcome to Sports Buddy
+                </h1>
+
+                <p class="lead text-light mb-4 opacity-75">
+                    Your ultimate companion for tracking sports, finding teammates, and staying active!
+                </p>
+
+                {% if current_user %}
+
+                <!-- LOGGED IN STATE -->
+                <div class="mt-4">
+
+                    <p class="text-light fs-5 mb-3">
+                        Welcome back,
+                        <strong class="text-success">{{ current_user.name }}</strong>!
+                    </p>
+
+                    <p class="text-light opacity-75">
+                        Start exploring matches, teammates, and your sports activity.
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <a href="{{ url_for('dashboard.dashboard') }}"
+                            class="btn btn-success btn-lg px-4 py-2 fw-semibold">
+                            <i class="bi bi-geo-alt-fill me-2"></i>Find Matches
+                        </a>
+
+                        <a href="{{ url_for('dashboard.create_match') }}"
+                            class="btn btn-outline-light btn-lg px-4 py-2 fw-semibold">
+                            <i class="bi bi-plus-circle me-2"></i>Create Match
+                        </a>
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <!-- GUEST STATE -->
+                <div class="d-flex justify-content-center gap-3 mt-4">
+
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-success btn-lg px-4 py-2 fw-semibold">
+                        <i class="bi bi-person-plus-fill me-2"></i>Get Started
+                    </a>
+
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-4 py-2 fw-semibold">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES SECTION -->
+    <div class="row mt-5 pt-4">
+
+        <div class="col-12 text-center mb-4">
+            <h2 class="text-white fw-bold">Core Features</h2>
+            <p class="text-light opacity-75">What your platform actually does</p>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark border-success h-100 shadow">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-activity display-4 text-success mb-3 d-block"></i>
+                    <h5 class="card-title text-white fw-bold">Track Sports</h5>
+                    <p class="card-text text-light opacity-75">
+                        Log activities and track performance across sports.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark border-success h-100 shadow">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-people-fill display-4 text-success mb-3 d-block"></i>
+                    <h5 class="card-title text-white fw-bold">Find Teammates</h5>
+                    <p class="card-text text-light opacity-75">
+                        Connect with players near you and build teams.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark border-success h-100 shadow">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-graph-up-arrow display-4 text-success mb-3 d-block"></i>
+                    <h5 class="card-title text-white fw-bold">Statistics</h5>
+                    <p class="card-text text-light opacity-75">
+                        Analyze your sports performance and progress.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

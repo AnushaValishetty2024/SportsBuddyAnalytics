@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}AI Match Report{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-robot me-2"></i>AI Match Report
+                </h5>
+                <span class="badge bg-primary">Match #{{ report.match_id }}</span>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">Match Summary</h6>
+                    <p class="mb-0">{{ report.summary }}</p>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-warning">
+                            <div class="card-body text-center">
+                                <i class="bi bi-trophy-fill text-warning" style="font-size: 2rem;"></i>
+                                <h6 class="card-title mt-2">MVP</h6>
+                                <p class="card-text fw-bold">{{ report.mvp }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Key Statistics</h6>
+                                <ul class="list-unstyled mb-0">
+                                    <li>Participants: {{ report.key_stats.total_participants }}</li>
+                                    <li>Winner: {{ report.key_stats.winner }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-success mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title text-success">
+                                    <i class="bi bi-check-circle me-1"></i>Strengths
+                                </h6>
+                                <ul class="list-unstyled mb-0">
+                                    {% for strength in report.strengths %}
+                                    <li>{{ strength }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-info mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title text-info">
+                                    <i class="bi bi-lightbulb me-1"></i>Improvements
+                                </h6>
+                                <ul class="list-unstyled mb-0">
+                                    {% for improvement in report.improvements %}
+                                    <li>{{ improvement }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

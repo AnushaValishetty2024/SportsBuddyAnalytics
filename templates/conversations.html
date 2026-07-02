@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+<div id="page-data" data-user-id="{{ session.user_id }}" class="d-none"></div>
+<div class="container-fluid px-4" style="max-width: 1200px; margin: 0 auto;">
+    <div class="dashboard-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="text-white mb-1">
+                    <i class="bi bi-chat-dots text-info me-2"></i>Messages
+                </h2>
+                <p class="text-white mb-0">Your conversations</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline-light">
+                    <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Start New Conversation Panel -->
+        <div class="col-lg-4 col-md-5">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-header border-secondary">
+                    <h6 class="text-white mb-0"><i class="bi bi-person-plus me-1"></i>Start New Chat</h6>
+                </div>
+                <div class="card-body">
+                    <div class="input-group mb-2">
+                        <input type="text" id="search-user-input"
+                            class="form-control form-control-sm bg-dark text-white border-secondary"
+                            placeholder="Search by username...">
+                        <button class="btn btn-outline-light btn-sm" id="search-user-btn"><i
+                                class="bi bi-search"></i></button>
+                    </div>
+                    <div id="search-users-list" class="list-group list-group-flush"
+                        style="max-height: 200px; overflow-y: auto;">
+                        <div class="text-center py-3 text-white-50 small">Search for a user to start chatting</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="col-lg-8 col-md-7">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                    <h6 class="text-white mb-0" id="chat-window-title">Select a conversation</h6>
+                    <span class="badge bg-info" id="chat-window-subtitle"></span>
+                </div>
+                <div class="card-body">
+                    <div id="chat-messages" class="chat-messages">
+                        <div class="text-center py-5 text-white-50">
+                            <i class="bi bi-chat-square-text" style="font-size: 2.5rem;"></i>
+                            <p class="mt-2">Choose a conversation to start chatting</p>
+                        </div>
+                    </div>
+
+                    <div id="chat-input-area" class="d-none mt-3">
+                        <form id="chat-form" class="input-group">
+                            <input type="text" id="chat-message-input"
+                                class="form-control bg-dark text-white border-secondary" placeholder="Type a message..."
+                                required autocomplete="off">
+                            <button class="btn btn-success" type="submit">
+                                <i class="bi bi-send me-1"></i>Send
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+    .chat-messages {
+        max-height: 55vh;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .chat-bubble-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        align-items: flex-end;
+    }
+
+    .chat-bubble-row.me {
+        flex-direction: row-reverse;
+    }
+
+    .chat-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .chat-avatar.them {
+        background: #198754;
+        color: #fff;
+    }
+
+    .chat-avatar.me {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    .chat-bubble {
+        max-width: 70%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+
+    .chat-bubble.them {
+        background: #212529;
+        color: #f8f9fa;
+        border-bottom-left-radius: 2px;
+    }
+
+    .chat-bubble.me {
+        background: #0d6efd;
+        color: #fff;
+        border-bottom-right-radius: 2px;
+    }
+
+    .chat-meta {
+        font-size: 0.7rem;
+        color: #adb5bd;
+        margin-top: 2px;
+    }
+
+    .conversation-item {
+        cursor: pointer;
+    }
+
+    .conversation-item:hover {
+        background: #212529;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentConversationId = null;
+        let pollInterval = null;
+
+        const conversationsList = document.getElementById('conversations-list');
+        const messagesDiv = document.getElementById('chat-messages');
+        const chatInputArea = document.getElementById('chat-input-area');
+        const chatForm = document.getElementById('chat-form');
+        const chatTitle = document.getElementById('chat-window-title');
+        const chatSubtitle = document.getElementById('chat-window-subtitle');
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function loadConversations() {
+            fetch('/api/conversations')
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.success) {
+                        conversationsList.innerHTML = '<div class="text-center py-4 text-danger">Failed to load conversations</div>';
+                        return;
+                    }
+                    const convos = data.conversations;
+                    if (!convos || convos.length === 0) {
+                        conversationsList.innerHTML = '<div class="text-center py-4 text-white-50">No conversations yet.<br>Find a buddy to start chatting!</div>';
+                        return;
+                    }
+                    let html = '';
+                    convos.forEach(function (c) {
+                        const unread = c.unread_count ? `<span class="badge bg-danger ms-1">${c.unread_count}</span>` : '';
+                        html += `
+                        <button class="list-group-item list-group-item-action bg-dark text-white border-secondary conversation-item"
+                                data-conversation-id="${c.id}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    <strong>${escapeHtml(c.other_user_name)}</strong>
+                                </div>
+                                ${unread}
+                            </div>
+                            <div class="chat-meta">${escapeHtml(c.updated_at || '')}</div>
+                        </button>
+                    `;
+                    });
+                    conversationsList.innerHTML = html;
+
+                    // Bind clicks
+                    document.querySelectorAll('.conversation-item').forEach(function (btn) {
+                        btn.addEventListener('click', function () {
+                            const cid = parseInt(this.getAttribute('data-conversation-id'));
+                            openConversation(cid);
+                        });
+                    });
+                })
+                .catch(function () {
+                    conversationsList.innerHTML = '<div class="text-center py-4 text-danger">Error loading conversations</div>';
+                });
+        }
+
+        function searchUsers(query) {
+            const list = document.getElementById('search-users-list');
+            if (!query || !query.trim()) {
+                list.innerHTML = '<div class="text-center py-3 text-white-50 small">Search for a user to start chatting</div>';
+                return;
+            }
+            fetch('/api/users/search?q=' + encodeURIComponent(query.trim()))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.success || !data.users || data.users.length === 0) {
+                        list.innerHTML = '<div class="text-center py-3 text-white-50 small">No users found</div>';
+                        return;
+                    }
+                    const currentUserId = parseInt(document.getElementById('page-data').dataset.userId);
+                    let html = '';
+                    data.users.forEach(function (u) {
+                        if (u.id === currentUserId) return;
+                        html += `
+                        <button class="list-group-item list-group-item-action bg-dark text-white border-secondary start-chat-btn"
+                                data-user-id="${u.id}" data-user-name="${escapeHtml(u.name)}">
+                            <i class="bi bi-person-circle me-1"></i> ${escapeHtml(u.name)}
+                            <button class="btn btn-sm btn-outline-success float-end start-chat-action">Chat</button>
+                        </button>
+                    `;
+                    });
+                    list.innerHTML = html || '<div class="text-center py-3 text-white-50 small">No users found</div>';
+
+                    document.querySelectorAll('.start-chat-action, .start-chat-btn').forEach(function (el) {
+                        el.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const btn = this.closest('.start-chat-btn');
+                            if (!btn) return;
+                            const uid = parseInt(btn.getAttribute('data-user-id'));
+                            const uname = btn.getAttribute('data-user-name');
+                            startConversation(uid, uname);
+                        });
+                    });
+                })
+                .catch(function () {
+                    list.innerHTML = '<div class="text-center py-3 text-danger small">Error searching users</div>';
+                });
+        }
+
+        function startConversation(otherUserId, otherUserName) {
+            fetch('/api/conversation/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ other_user_id: otherUserId })
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (data.success && data.conversation_id) {
+                        chatTitle.textContent = otherUserName;
+                        openConversation(data.conversation_id);
+                        document.getElementById('search-user-input').value = '';
+                        document.getElementById('search-users-list').innerHTML = '<div class="text-center py-3 text-white-50 small">Search for a user to start chatting</div>';
+                    } else {
+                        alert('Failed to start conversation.');
+                    }
+                })
+                .catch(function () {
+                    alert('Network error.');
+                });
+        }
+
+        function openConversation(conversationId) {
+            currentConversationId = conversationId;
+            chatInputArea.classList.remove('d-none');
+            loadMessages(conversationId);
+            startPolling();
+        }
+
+        function loadMessages(conversationId) {
+            messagesDiv.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-success" role="status"></div><p class="text-white-50 mt-2">Loading messages...</p></div>';
+            fetch('/api/conversation/' + conversationId + '/messages')
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.success) {
+                        messagesDiv.innerHTML = '<div class="text-center py-4 text-danger">Failed to load messages</div>';
+                        return;
+                    }
+                    renderMessages(data.messages);
+                })
+                .catch(function () {
+                    messagesDiv.innerHTML = '<div class="text-center py-4 text-danger">Error loading messages</div>';
+                });
+        }
+
+        function renderMessages(messages) {
+            if (!messages || messages.length === 0) {
+                messagesDiv.innerHTML = '<div class="text-center py-4 text-white-50">No messages yet. Say hello!</div>';
+                return;
+            }
+            const currentUserId = parseInt(document.getElementById('page-data').dataset.userId);
+            let html = '';
+            messages.forEach(function (m) {
+                const isMe = m.sender_id === currentUserId;
+                html += `
+                    <div class="chat-bubble-row ${isMe ? 'me' : 'them'}">
+                        <div class="chat-avatar ${isMe ? 'me' : 'them'}">
+                            <i class="bi bi-${isMe ? 'person-fill' : 'person'}"></i>
+                        </div>
+                        <div>
+                            <div class="chat-bubble ${isMe ? 'me' : 'them'}">${escapeHtml(m.message_text)}</div>
+                            <div class="chat-meta">${escapeHtml(m.sender_name || '')} &middot; ${escapeHtml(m.created_at || '')}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            messagesDiv.innerHTML = html;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        chatForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!currentConversationId) return;
+            const input = document.getElementById('chat-message-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            fetch('/api/message/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conversation_id: currentConversationId, message_text: text })
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    input.value = '';
+                    if (data.success) {
+                        loadMessages(currentConversationId);
+                        loadConversations(); // update preview
+                    }
+                })
+                .catch(function () {
+                    alert('Failed to send message. Please try again.');
+                });
+        });
+
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(function () {
+                if (currentConversationId) {
+                    loadMessages(currentConversationId);
+                }
+                loadConversations();
+            }, 3000);
+        }
+
+        // Initial load
+        loadConversations();
+
+        document.getElementById('search-user-btn').addEventListener('click', function () {
+            searchUsers(document.getElementById('search-user-input').value);
+        });
+        document.getElementById('search-user-input').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchUsers(this.value);
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% block title %}Match Chat - {{ match.sport_name }}{% endblock %}
+{% block content %}
+<div class="container-fluid px-4" style="max-width: 1200px; margin: 0 auto;">
+    <div class="dashboard-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="text-white mb-1">
+                    <i class="bi bi-chat-dots text-info me-2"></i>{{ match.sport_name }}
+                </h2>
+                <p class="text-white mb-0">Match Group Chat &middot; {{ match.venue_name }} &middot; {{ match.match_date
+                    }}</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline-light">
+                    <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Participants Sidebar -->
+        <div class="col-lg-4 col-md-5">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                    <h6 class="text-white mb-0"><i class="bi bi-people me-1"></i>Participants</h6>
+                    <span class="badge bg-info" id="participants-count">0</span>
+                </div>
+                <div class="card-body p-0">
+                    <div id="participants-list" class="list-group list-group-flush">
+                        <div class="text-center py-4 text-white-50">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="col-lg-8 col-md-7">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-header border-secondary">
+                    <h6 class="text-white mb-0" id="chat-window-title">Group Chat</h6>
+                </div>
+                <div class="card-body">
+                    <div id="chat-messages" class="chat-messages">
+                        <div class="text-center py-5 text-white-50">
+                            <i class="bi bi-chat-square-text" style="font-size: 2.5rem;"></i>
+                            <p class="mt-2">Chat with match participants</p>
+                        </div>
+                    </div>
+
+                    <div id="chat-input-area" class="mt-3">
+                        <form id="chat-form" class="input-group">
+                            <input type="text" id="chat-message-input"
+                                class="form-control bg-dark text-white border-secondary" placeholder="Type a message..."
+                                required autocomplete="off">
+                            <button class="btn btn-success" type="submit">
+                                <i class="bi bi-send me-1"></i>Send
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden data for JS -->
+<div id="page-data" class="d-none" data-match-id="{{ match.id }}" data-user-id="{{ session.user_id }}"
+    data-user-name="{{ user.name }}"
+    data-is-creator="{% if match.creator_id == session.user_id %}true{% else %}false{% endif %}">
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+    .chat-messages {
+        max-height: 55vh;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .chat-bubble-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        align-items: flex-end;
+    }
+
+    .chat-bubble-row.me {
+        flex-direction: row-reverse;
+    }
+
+    .chat-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        background: #198754;
+        color: #fff;
+    }
+
+    .chat-avatar.me {
+        background: #0d6efd;
+    }
+
+    .chat-bubble {
+        max-width: 70%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+
+    .chat-bubble.them {
+        background: #212529;
+        color: #f8f9fa;
+        border-bottom-left-radius: 2px;
+    }
+
+    .chat-bubble.me {
+        background: #0d6efd;
+        color: #fff;
+        border-bottom-right-radius: 2px;
+    }
+
+    .chat-meta {
+        font-size: 0.7rem;
+        color: #adb5bd;
+        margin-top: 2px;
+    }
+
+    .participant-item {
+        cursor: default;
+    }
+
+    .participant-item .badge-admin {
+        font-size: 0.65rem;
+    }
+
+    .system-message {
+        text-align: center;
+        font-style: italic;
+        color: #adb5bd;
+        font-size: 0.85rem;
+        margin: 8px 0;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const MATCH_ID = parseInt(document.getElementById('page-data').dataset.matchId);
+        const CURRENT_USER_ID = parseInt(document.getElementById('page-data').dataset.userId);
+        const CURRENT_USER_NAME = document.getElementById('page-data').dataset.userName;
+        const IS_CREATOR = document.getElementById('page-data').dataset.isCreator === 'true';
+
+        const messagesDiv = document.getElementById('chat-messages');
+        const participantsList = document.getElementById('participants-list');
+        const participantsCount = document.getElementById('participants-count');
+        const chatInputArea = document.getElementById('chat-input-area');
+        const chatForm = document.getElementById('chat-form');
+
+        let pollInterval = null;
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function loadParticipants() {
+            fetch(`/api/match/${MATCH_ID}/participants`)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success || !data.participants || data.participants.length === 0) {
+                        participantsList.innerHTML = '<div class="text-center py-4 text-white-50">No participants yet.</div>';
+                        participantsCount.textContent = '0';
+                        return;
+                    }
+
+                    participantsCount.textContent = data.participants.length;
+                    let html = '';
+                    data.participants.forEach(p => {
+                        const isMe = p.id === CURRENT_USER_ID;
+                        const adminBadge = (p.id === data.creator_id)
+                            ? `<span class="badge bg-warning text-dark participant-admin">Admin</span>` : '';
+                        html += `
+                            <div class="list-group-item list-group-item-action bg-dark text-white border-secondary participant-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-person-circle me-1"></i>
+                                        <strong>${escapeHtml(p.name)}</strong>
+                                        ${isMe ? '<span class="badge bg-info ms-1">You</span>' : ''}
+                                    </div>
+                                    ${adminBadge}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    participantsList.innerHTML = html;
+                })
+                .catch(() => {
+                    participantsList.innerHTML = '<div class="text-center py-4 text-danger">Error loading participants</div>';
+                });
+        }
+
+        function loadMessages() {
+            fetch(`/api/match/${MATCH_ID}/messages`)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) {
+                        messagesDiv.innerHTML = '<div class="text-center py-4 text-danger">Failed to load messages</div>';
+                        return;
+                    }
+                    renderMessages(data.messages);
+                })
+                .catch(() => {
+                    messagesDiv.innerHTML = '<div class="text-center py-4 text-danger">Error loading messages</div>';
+                });
+        }
+
+        function renderMessages(messages) {
+            if (!messages || messages.length === 0) {
+                messagesDiv.innerHTML = '<div class="text-center py-4 text-white-50">No messages yet. Say hello to the group!</div>';
+                return;
+            }
+
+            let html = '';
+            messages.forEach(m => {
+                const isMe = m.sender_id === CURRENT_USER_ID;
+                html += `
+                    <div class="chat-bubble-row ${isMe ? 'me' : 'them'}">
+                        <div class="chat-avatar ${isMe ? 'me' : ''}">
+                            <i class="bi bi-${isMe ? 'person-fill' : 'person'}"></i>
+                        </div>
+                        <div>
+                            <div class="chat-bubble ${isMe ? 'me' : 'them'}">${escapeHtml(m.message_text)}</div>
+                            <div class="chat-meta">${escapeHtml(m.sender_name || '')} &middot; ${escapeHtml(m.created_at || '')}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            messagesDiv.innerHTML = html;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        chatForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-message-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            fetch('/api/message/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ match_id: MATCH_ID, message_text: text })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    input.value = '';
+                    if (data.success) {
+                        loadMessages();
+                    }
+                })
+                .catch(() => {
+                    alert('Failed to send message. Please try again.');
+                });
+        });
+
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(() => {
+                if (MATCH_ID) {
+                    loadMessages();
+                    loadParticipants();
+                }
+            }, 3000);
+        }
+
+        loadParticipants();
+        loadMessages();
+        startPolling();
+    });
+</script>
+{% endblock %}

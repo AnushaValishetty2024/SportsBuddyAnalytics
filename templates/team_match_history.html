@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ team.team_name }} - Match History{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <!-- Team Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-3">
+                <a href="{{ url_for('team.team_dashboard', team_id=team.id) }}"
+                    class="btn btn-outline-light btn-sm me-2">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                </a>
+                <h2 class="text-white mb-0">{{ team.team_name }} - Match History</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match History -->
+    <div class="card bg-dark border-secondary">
+        <div class="card-header border-secondary">
+            <h5 class="text-white mb-0">
+                <i class="bi bi-calendar-event me-2"></i>All Matches
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if matches %}
+            <div class="row g-3">
+                {% for match in matches %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card match-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge bg-{{ 'success' if match.sport_type == 'outdoor' else 'info' }}">
+                                    {{ match.sport_type|capitalize }}
+                                </span>
+                                <span
+                                    class="badge bg-{{ 'success' if match.result == 'Won' else ('danger' if match.result == 'Lost' else 'info') }}">
+                                    {{ match.result }}
+                                </span>
+                            </div>
+
+                            <div class="text-center mb-3">
+                                <h6 class="text-white mb-1">{{ team.team_name }}</h6>
+                                <div class="text-white-50 small mb-2">vs</div>
+                                <h6 class="text-white mb-0">{{ match.opponent }}</h6>
+                            </div>
+
+                            {% if match.status == 'completed' and match.team1_score is not none %}
+                            <div class="text-center mb-3">
+                                <div class="badge bg-warning text-dark fs-6">
+                                    {{ match.team1_score }} - {{ match.team2_score }}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="border-top border-secondary pt-2">
+                                <div class="small text-white-50 mb-1">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ match.venue_name }}
+                                </div>
+                                <div class="small text-white-50 mb-1">
+                                    <i class="bi bi-calendar me-1"></i>{{ match.match_date }}
+                                </div>
+                                <div class="small text-white-50">
+                                    <i class="bi bi-clock me-1"></i>{{ match.match_time }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-x text-white-50" style="font-size: 3rem;"></i>
+                <p class="text-white-50 mt-3">No matches played yet</p>
+                <p class="text-white small">Matches will appear here once scheduled and completed</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

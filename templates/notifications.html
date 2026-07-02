@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-bell me-2"></i>Notifications
+                </h5>
+                <button class="btn btn-sm btn-outline-primary" id="markAllReadBtnPage">
+                    <i class="bi bi-check-all me-1"></i>Mark all as read
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="notificationListPage">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-dark">Loading notifications...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const notificationList = document.getElementById('notificationListPage');
+        const markAllReadBtn = document.getElementById('markAllReadBtnPage');
+
+        function loadNotifications() {
+            fetch('/api/notifications')
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) {
+                        notificationList.innerHTML = '<div class="text-center py-4 text-danger">Failed to load notifications</div>';
+                        return;
+                    }
+
+                    const notifications = data.notifications;
+
+                    if (!notifications || notifications.length === 0) {
+                        notificationList.innerHTML = '<div class="text-center py-4 text-dark">No notifications yet</div>';
+                        return;
+                    }
+
+                    let html = '<div class="list-group">';
+                    notifications.forEach(n => {
+                        const timeAgo = getTimeAgo(new Date(n.created_at));
+                        html += `
+                        <div class="list-group-item ${n.is_read ? '' : 'border-start border-warning'}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 ${n.is_read ? 'text-dark' : 'text-primary'}">${escapeHtml(n.title)}</h6>
+                                    <p class="mb-1">${escapeHtml(n.message)}</p>
+                                    <small class="text-dark">${timeAgo}</small>
+                                </div>
+                                ${n.is_read ? '<span class="badge bg-secondary">Read</span>' : '<span class="badge bg-warning text-dark">New</span>'}
+                            </div>
+                        </div>
+                    `;
+                    });
+                    html += '</div>';
+                    notificationList.innerHTML = html;
+                })
+                .catch(() => {
+                    notificationList.innerHTML = '<div class="text-center py-4 text-danger">Error loading notifications</div>';
+                });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return seconds + ' seconds ago';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return minutes + ' minutes ago';
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return hours + ' hours ago';
+            const days = Math.floor(hours / 24);
+            return days + ' days ago';
+        }
+
+        // Mark all as read
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', function () {
+                fetch('/api/notifications/read-all', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            loadNotifications();
+                        }
+                    })
+                    .catch(() => { });
+            });
+        }
+
+        // Initial load
+        loadNotifications();
+    });
+</script>
+{% endblock %}

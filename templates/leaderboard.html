@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard - Sports Buddy{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-white mb-4">Leaderboard</h1>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header border-secondary bg-primary">
+                    <h5 class="text-white mb-0 fw-bold">
+                        <i class="bi bi-trophy me-2"></i>Top Players
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <p class="text-light">Loading leaderboard...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Point Adjustment Modal -->
+<div class="modal fade" id="adjustPointsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-white" id="adjustModalLabel">Adjust Player Points</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="adjustPointsForm">
+                    <input type="hidden" id="adjustUserId">
+                    <div class="mb-3">
+                        <label class="form-label text-white">Points (positive or negative)</label>
+                        <input type="number" class="form-control bg-dark text-white border-secondary" id="adjustDelta"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">Reason</label>
+                        <textarea class="form-control bg-dark text-white border-secondary" id="adjustReason" rows="3"
+                            required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitPointsAdjustment()">Apply
+                    Adjustment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentAdjustType = null;
+
+    // Load leaderboard data dynamically
+    document.addEventListener('DOMContentLoaded', function () {
+        loadLeaderboard();
+    });
+
+    function loadLeaderboard() {
+        fetch('/api/leaderboard')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.querySelector('.card-body');
+                if (data.success && data.leaderboard && data.leaderboard.length > 0) {
+                    let html = '<div class="list-group list-group-flush">';
+                    data.leaderboard.forEach((entry, index) => {
+                        const rank = index + 1;
+                        let rankBadge = '';
+                        if (rank === 1) rankBadge = '<i class="bi bi-trophy-fill text-warning"></i> ';
+                        else if (rank === 2) rankBadge = '<i class="bi bi-trophy-fill text-secondary"></i> ';
+                        else if (rank === 3) rankBadge = '<i class="bi bi-trophy-fill text-warning" style="filter: grayscale(50%);"></i> ';
+
+                        const manualIndicator = entry.manual_points > 0 ?
+                            '<small class="text-warning ms-2">(+' + entry.manual_points + ' adjusted)</small>' : '';
+
+                        html += `
+                        <div class="list-group-item bg-dark border-secondary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="me-2 fw-bold">${rankBadge}#${rank}</span>
+                                    <span class="fw-bold text-dark">${entry.name || 'Unknown'}</span>
+                                    ${manualIndicator}
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-primary fs-6">${entry.total_points || 0} pts</span>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="showAdjustModal(${entry.user_id}, 'player')" title="Adjust Points">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    });
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="text-center py-4 text-muted"><p>No leaderboard data available yet.</p></div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading leaderboard:', error);
+                document.querySelector('.card-body').innerHTML = '<div class="text-center py-4 text-muted"><p>Failed to load leaderboard. Please try again later.</p></div>';
+            });
+    }
+
+    function showAdjustModal(entityId, type) {
+        currentAdjustType = type;
+        document.getElementById('adjustUserId').value = entityId;
+        document.getElementById('adjustModalLabel').textContent = type === 'player' ? 'Adjust Player Points' : 'Adjust Team Points';
+        new bootstrap.Modal(document.getElementById('adjustPointsModal')).show();
+    }
+
+    function submitPointsAdjustment() {
+        const userId = document.getElementById('adjustUserId').value;
+        const delta = document.getElementById('adjustDelta').value;
+        const reason = document.getElementById('adjustReason').value;
+
+        if (!userId || !delta || !reason) {
+            alert('All fields are required.');
+            return;
+        }
+
+        const endpoint = currentAdjustType === 'player' ? '/api/admin/adjust-player-points' : '/api/teams/adjust-points';
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                delta: parseInt(delta),
+                reason: reason
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('adjustPointsModal')).hide();
+                    document.getElementById('adjustPointsForm').reset();
+                    loadLeaderboard(); // Reload leaderboard
+                } else {
+                    alert(data.message || 'Failed to adjust points.');
+                }
+            })
+            .catch(error => {
+                console.error('Error adjusting points:', error);
+                alert('Failed to adjust points. Please try again.');
+            });
+    }
+</script>
+{% endblock %}

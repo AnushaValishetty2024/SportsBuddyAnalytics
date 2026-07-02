@@ -1,0 +1,487 @@
+{% extends "base.html" %}
+{% block title %}{{ team.team_name }} Dashboard - Sports Buddy{% endblock %}
+
+{% set render_charts = (points_trend is defined and points_trend) or (performance_trend is defined and
+performance_trend) %}
+
+{% block content %}
+
+<div class="team-dashboard">
+    <!-- Team Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-secondary">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        {% if team.logo %}
+                        <img src="{{ url_for('static', filename=team.logo) }}" alt="{{ team.team_name }}"
+                            class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                        {% else %}
+                        <div class="rounded me-3 d-flex align-items-center justify-content-center bg-success text-white"
+                            style="width: 80px; height: 80px; font-size: 2rem; font-weight: bold;">
+                            {{ team.team_name[0] }}
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <h2 class="text-white mb-1">{{ team.team_name }}</h2>
+                            <p class="text-white-50 mb-0">
+                                <span class="badge bg-success me-2">{{ team.sport_type }}</span>
+                                <span class="badge bg-info">{{ team.location }}</span>
+                            </p>
+                            <p class="text-white small mt-1 mb-0">
+                                <i class="bi bi-person me-1"></i>
+                                Captain: {{ team.captain_name }}
+                            </p>
+                        </div>
+
+                        <div class="ms-auto">
+                            <a href="{{ url_for('team.team_details', team_id=team.id) }}"
+                                class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-arrow-left me-1"></i>Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SECTION 1: Team Stats ========== -->
+    <div class="dashboard-section mb-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="text-white mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Team Statistics
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card bg-dark border-secondary p-3 text-center rounded">
+                            <i class="bi bi-trophy text-warning" style="font-size: 2rem;"></i>
+                            <h4 class="text-white mt-2 mb-0">{{ stats.get('points', 0) }}</h4>
+                            <p class="text-white-50 small mb-0">Total Points</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card bg-dark border-secondary p-3 text-center rounded">
+                            <i class="bi bi-calendar-check text-success" style="font-size: 2rem;"></i>
+                            <h4 class="text-white mt-2 mb-0">{{ stats.get('matches_played', 0) }}</h4>
+                            <p class="text-white-50 small mb-0">Matches Played</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card bg-dark border-secondary p-3 text-center rounded">
+                            <i class="bi bi-graph-up text-info" style="font-size: 2rem;"></i>
+                            <h4 class="text-white mt-2 mb-0">{{ "%.1f"|format(stats.get('win_rate', 0)) }}%</h4>
+                            <p class="text-white-50 small mb-0">Win Rate</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card bg-dark border-secondary p-3 text-center rounded">
+                            <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
+                            <h4 class="text-white mt-2 mb-0">{{ stats.get('total_members', team_members|length) }}</h4>
+                            <p class="text-white-50 small mb-0">Members</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card bg-dark border-secondary p-3 text-center rounded">
+                            <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+                            <h4 class="text-white mt-2 mb-0">{{ stats.get('wins', 0) }}</h4>
+                            <p class="text-white-50 small mb-0">Wins</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card bg-dark border-secondary p-3 text-center rounded">
+                            <i class="bi bi-x-circle text-danger" style="font-size: 2rem;"></i>
+                            <h4 class="text-white mt-2 mb-0">{{ stats.get('losses', 0) }}</h4>
+                            <p class="text-white-50 small mb-0">Losses</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card bg-dark border-secondary p-3 text-center rounded">
+                            <i class="bi bi-dash-circle text-warning" style="font-size: 2rem;"></i>
+                            <h4 class="text-white mt-2 mb-0">{{ stats.get('draws', 0) }}</h4>
+                            <p class="text-white-50 small mb-0">Draws</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-card bg-dark border-secondary p-3 text-center rounded">
+                            <i class="bi bi-bar-chart text-info" style="font-size: 2rem;"></i>
+                            <h4 class="text-white mt-2 mb-0">{% if stats.get('rank', 0) > 0 %}#{{ stats.get('rank', 0)
+                                }}{% else %}N/A{% endif %}</h4>
+                            <p class="text-white-50 small mb-0">Leaderboard Rank</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SECTION 2: Recent Activity ========== -->
+    <div class="dashboard-section mb-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <h5 class="text-white mb-0">
+                    <i class="bi bi-clock-history me-2"></i>Recent Activity
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if recent_activity and recent_activity|length > 0 %}
+                <div class="list-group list-group-flush">
+                    {% for activity in recent_activity[:10] %}
+                    <div class="list-group-item bg-dark text-white border-secondary">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <p class="mb-1 small text-white">{{ activity.description }}</p>
+                            </div>
+                            <small class="text-white-50 ms-3">{{ activity.timestamp }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-white-50">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-3 mb-0">No recent activity</p>
+                    <small>Activity will appear here as your team plays matches</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SECTION 3: Leaderboard ========== -->
+    <div class="dashboard-section mb-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="text-white mb-0">
+                    <i class="bi bi-trophy me-2"></i>Leaderboard Standing
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if stats.get('rank', 0) > 0 and stats.get('matches_played', 0) > 0 %}
+                <div class="text-center py-4">
+                    <i class="bi bi-award text-warning" style="font-size: 4rem;"></i>
+                    <h2 class="text-white mt-3">Rank #{{ stats.get('rank', 0) }}</h2>
+                    <p class="text-white-50">
+                        Your team is ranked #{{ stats.get('rank', 0) }} out of all teams
+                    </p>
+                    <p class="text-white-50">
+                        <strong>{{ stats.get('points', 0) }}</strong> total points
+                    </p>
+                    <a href="{{ url_for('team.team_leaderboard') }}" class="btn btn-outline-info mt-3">
+                        <i class="bi bi-trophy me-1"></i>View Full Leaderboard
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-white-50">
+                    <i class="bi bi-bar-chart" style="font-size: 3rem;"></i>
+                    <p class="mt-3 mb-0">Not yet ranked</p>
+                    <small>Complete matches to appear on the leaderboard</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SECTION 4: Analytics Graphs ========== -->
+    <div class="dashboard-section mb-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h5 class="text-white mb-0">
+                    <i class="bi bi-graph-up-arrow me-2"></i>Team Analytics
+                </h5>
+            </div>
+            <div class="card-body">
+                {% set analytics = team_analytics if team_analytics else {} %}
+                {% set points_trend = analytics.get('points_trend', []) %}
+                {% set performance_trend = analytics.get('performance_trend', []) %}
+                {% set win_loss = analytics.get('win_loss_summary', {}) %}
+
+                {% if points_trend or performance_trend %}
+                <div class="row g-4">
+                    {% if points_trend %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card bg-dark border-secondary">
+                            <div class="card-body">
+                                <h6 class="text-white mb-3">Points Progression</h6>
+                                <div style="height: 300px;">
+                                    <canvas id="chart-points-trend"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if performance_trend %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card bg-dark border-secondary">
+                            <div class="card-body">
+                                <h6 class="text-white mb-3">Performance Trend</h6>
+                                <div style="height: 300px;">
+                                    <canvas id="chart-performance-trend"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if win_loss.wins > 0 or win_loss.losses > 0 %}
+                    <div class="col-lg-6 mx-auto">
+                        <div class="card bg-dark border-secondary">
+                            <div class="card-body">
+                                <h6 class="text-white mb-3">Win/Loss Ratio</h6>
+                                <div style="height: 300px;">
+                                    <canvas id="chart-win-loss"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-white-50">
+                    <i class="bi bi-graph-up" style="font-size: 3rem;"></i>
+                    <p class="mt-3 mb-0">No analytics data yet</p>
+                    <small>Charts will appear here after your team completes matches</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if matches and matches|length > 0 %}
+    <!-- ========== SECTION 5: Match History Summary ========== -->
+    <div class="dashboard-section mb-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <h5 class="text-white mb-0">
+                    <i class="bi bi-calendar-event me-2"></i>Recent Matches
+                </h5>
+                <a href="{{ url_for('team.team_match_history', team_id=team.id) }}" class="btn btn-sm btn-outline-info">
+                    View All
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for match in matches[:5] %}
+                    {% set opponent = match.team2_name if match.team1_id == team.id else match.team1_name %}
+                    <div class="list-group-item bg-dark text-white border-secondary">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-semibold">vs {{ opponent }}</div>
+                                <div class="small text-white-50">
+                                    {{ match.match_date }} • {{ match.venue_name }}
+                                </div>
+                            </div>
+                            <div>
+                                {% if match.status == 'completed' %}
+                                {% if match.is_draw %}
+                                <span class="badge bg-info">Draw</span>
+                                {% elif match.winner_team_id == team.id %}
+                                <span class="badge bg-success">Won</span>
+                                {% else %}
+                                <span class="badge bg-danger">Lost</span>
+                                {% endif %}
+                                {% else %}
+                                <span class="badge bg-secondary">Scheduled</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Data for JavaScript -->
+<script id="team-data" type="application/json">
+{
+    "team_id": {{ team.id }},
+    "analytics": {{ team_analytics | tojson | safe }},
+    "stats": {{ stats | tojson | safe }}
+}
+</script>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{% if render_charts %}
+<script>
+    (function () {
+        'use strict';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                const dataEl = document.getElementById('team-data');
+                if (!dataEl) return;
+
+                const teamData = JSON.parse(dataEl.textContent);
+                const analytics = teamData.analytics || {};
+
+                const pointsTrend = analytics.points_trend || [];
+                const performanceTrend = analytics.performance_trend || [];
+                const winLossSummary = analytics.win_loss_summary || { wins: 0, losses: 0 };
+
+                const COLORS = {
+                    green: '#22c55e',
+                    blue: '#3b82f6',
+                    red: '#ef4444'
+                };
+
+                // Points trend chart
+                const pointsCtx = document.getElementById('chart-points-trend');
+                if (pointsCtx && pointsTrend.length > 0) {
+                    const ptsLabels = pointsTrend.map(function (p) { return p.match; });
+                    const ptsValues = pointsTrend.map(function (p) { return p.points; });
+
+                    new Chart(pointsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ptsLabels,
+                            datasets: [{
+                                label: 'Points',
+                                data: ptsValues,
+                                borderColor: COLORS.blue,
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { color: '#94a3b8' },
+                                    grid: { color: 'rgba(51, 65, 85, 0.5)' }
+                                },
+                                x: {
+                                    ticks: { color: '#94a3b8' },
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Performance trend chart
+                const perfCtx = document.getElementById('chart-performance-trend');
+                if (perfCtx && performanceTrend.length > 0) {
+                    const perfLabels = performanceTrend.map(function (p) { return p.match; });
+                    const winsData = performanceTrend.map(function (p) { return p.wins; });
+                    const lossesData = performanceTrend.map(function (p) { return p.losses; });
+
+                    new Chart(perfCtx, {
+                        type: 'line',
+                        data: {
+                            labels: perfLabels,
+                            datasets: [
+                                {
+                                    label: 'Wins',
+                                    data: winsData,
+                                    borderColor: COLORS.green,
+                                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'Losses',
+                                    data: lossesData,
+                                    borderColor: COLORS.red,
+                                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.3
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    labels: { color: '#94a3b8' }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { color: '#94a3b8', stepSize: 1 },
+                                    grid: { color: 'rgba(51, 65, 85, 0.5)' }
+                                },
+                                x: {
+                                    ticks: { color: '#94a3b8' },
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Win/Loss pie chart
+                if (winLossSummary.wins > 0 || winLossSummary.losses > 0) {
+                    const winLossCtx = document.getElementById('chart-win-loss');
+                    if (winLossCtx) {
+                        new Chart(winLossCtx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Wins', 'Losses'],
+                                datasets: [{
+                                    data: [winLossSummary.wins, winLossSummary.losses],
+                                    backgroundColor: [COLORS.green, COLORS.red],
+                                    borderColor: '#1e293b',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: { color: '#94a3b8', padding: 12 }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Error initializing team dashboard charts:', e);
+            }
+        });
+    })();
+</script>
+{% endif %}
+{% endblock %}
+
+<style>
+    .team-dashboard .dashboard-section {
+        opacity: 1;
+        transform: none;
+    }
+
+    #team-data {
+        display: none;
+    }
+
+    .stat-card {
+        transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+</style>
