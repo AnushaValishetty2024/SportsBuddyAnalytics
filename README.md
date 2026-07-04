@@ -140,7 +140,7 @@ SportsBuddyAnalytics/
 
 ## 🏠 Home Page
 
-![Home Page](screenshots/home%20page.png)
+![Home Page](screenshots/home-page.png)
 
 ---
 
@@ -148,11 +148,11 @@ SportsBuddyAnalytics/
 
 | Login | Create Account |
 |--------|----------------|
-| ![](screenshots/login.png) | ![](screenshots/create%20account.png) |
+| ![Login](screenshots/login.png) | ![Create Account](screenshots/create-account.png) |
 
 ---
 
-## 🏅 Player Dashboard
+## 📊 Dashboard
 
 ![Dashboard](screenshots/dashboard.png)
 
@@ -162,19 +162,19 @@ SportsBuddyAnalytics/
 
 | Discover Matches | Game Details |
 |------------------|--------------|
-| ![](screenshots/Discover%20matches.png) | ![](screenshots/game%20details.png) |
+| ![Discover Matches](screenshots/discover-matches.png) | ![Game Details](screenshots/game-details.png) |
 
 ---
 
-## 📊 Analytics Dashboard
+## 📈 Analytics Dashboard
 
-![Analytics](screenshots/analtyics.png)
+![Analytics](screenshots/analytics.png)
 
 ---
 
 ## 🤖 AI Assistant
 
-![AI Assistant](screenshots/AI%20assistent.png)
+![AI Assistant](screenshots/ai-assistant.png)
 
 ---
 
@@ -182,35 +182,43 @@ SportsBuddyAnalytics/
 
 | Teams | Create Team |
 |-------|-------------|
-| ![](screenshots/Teams.png) | ![](screenshots/create%20team.png) |
+| ![Teams](screenshots/teams.png) | ![Create Team](screenshots/create-team.png) |
 
 | Team Details | Team Leaderboard |
 |--------------|------------------|
-| ![](screenshots/team%20details.png) | ![](screenshots/team%20leaderboard.png) |
+| ![Team Details](screenshots/team-details.png) | ![Team Leaderboard](screenshots/team-leaderboard.png) |
 
 ---
 
-## 🏆 Leaderboards
+## 🏆 Rankings
 
-| Weekly Ranking | Monthly Ranking |
-|---------------|-----------------|
-| ![](screenshots/weekly%20ranking.png) | ![](screenshots/monthly%20ranking.png) |
+| Weekly | Monthly |
+|---------|----------|
+| ![Weekly Ranking](screenshots/weekly-ranking.png) | ![Monthly Ranking](screenshots/monthly-ranking.png) |
 
-| Lifetime Ranking | Player Ranking |
-|------------------|----------------|
-| ![](screenshots/lifetime%20ranking.png) | ![](screenshots/player%20ranking.png) |
+| Lifetime | Player Ranking |
+|-----------|----------------|
+| ![Lifetime Ranking](screenshots/lifetime-ranking.png) | ![Player Ranking](screenshots/player-ranking.png) |
 
 ---
 
-## 📅 Match & Venue Information
-
-| Upcoming Matches | Nearby Sports |
-|-----------------|---------------|
-| ![](screenshots/upcoming%20matches.png) | ![](screenshots/nearby%20sports.png) |
+## 📍 Maps & Locations
 
 | Match Map | Venue Map |
 |-----------|-----------|
-| ![](screenshots/match%20map.png) | ![](screenshots/venue%20map.png) |
+| ![Match Map](screenshots/match-map.png) | ![Venue Map](screenshots/venue-map.png) |
+
+---
+
+## 🏟 Sports & Events
+
+| Upcoming Matches | Nearby Sports |
+|-----------------|---------------|
+| ![Upcoming Matches](screenshots/upcoming-matches.png) | ![Nearby Sports](screenshots/nearby-sports.png) |
+
+### All Sports
+
+![All Sports](screenshots/all-sports.png)
 
 ---
 
@@ -224,14 +232,7 @@ SportsBuddyAnalytics/
 
 | Score Adjustment | Adjust Points |
 |-----------------|---------------|
-| ![](screenshots/score%20adjustment.png) | ![](screenshots/adjust%20points.png) |
-
----
-
-## 🌍 Sports Categories
-
-![All Sports](screenshots/all%20sports.png)
-
+| ![Score Adjustment](screenshots/score-adjustment.png) | ![Adjust Points](screenshots/adjust-points.png) |
 
 # ⚙️ Installation Steps
 
