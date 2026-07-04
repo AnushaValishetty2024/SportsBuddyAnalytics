@@ -2196,3 +2196,25 @@ input[type="file"]::file-selector-button {
 .text-muted {
     color: #d1d5db !important;
 }
+
+/* Sports Details Modal - Upcoming Matches & Nearby Venues */
+.sports-detail-item {
+    background: #f8f9fa !important;
+    color: #212529 !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.sports-detail-item strong {
+    color: #212529 !important;
+    font-weight: 600;
+}
+
+.sports-detail-item small {
+    color: #6c757d !important;
+}
+
+.sports-detail-item i {
+    color: #198754;
+}

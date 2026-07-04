@@ -211,6 +211,23 @@ main {
     font-size: 0.82rem;
 }
 
+/* Match Cards - Force dark text for readability */
+.match-card .card-title,
+.match-card .card-text,
+.match-card p,
+.match-card small,
+.match-card .card-body>div,
+.match-card h5,
+.match-card h6 {
+    color: #1F2937 !important;
+}
+
+.match-card .card-title.text-dark,
+.match-card .card-text.text-dark,
+.match-card .text-dark {
+    color: #1F2937 !important;
+}
+
 /* Business Cards */
 .business-card {
     border: 1px solid #334155;
@@ -221,6 +238,17 @@ main {
     transform: translateY(-3px);
     border-color: #3b82f6;
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15);
+}
+
+/* Business Cards - Force dark text for readability */
+.business-card .card-title,
+.business-card .card-text,
+.business-card p,
+.business-card small,
+.business-card h5,
+.business-card h6,
+.business-card .card-body>div {
+    color: #1F2937 !important;
 }
 
 /* Game Cards (All Games Section) */
@@ -574,7 +602,23 @@ main {
 }
 
 #sportDetailModal .list-group-item {
-    background-color: transparent;
+    background: #f8f9fa !important;
+    color: #212529 !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+#sportDetailModal .list-group-item strong {
+    color: #212529 !important;
+}
+
+#sportDetailModal .list-group-item small {
+    color: #6c757d !important;
+}
+
+#sportDetailModal .list-group-item p,
+#sportDetailModal .list-group-item span,
+#sportDetailModal .list-group-item div {
+    color: #212529 !important;
 }
 
 /* Sport detail quick stat boxes */
@@ -638,6 +682,27 @@ main {
 .card-header {
     background: rgba(30, 41, 59, 0.95) !important;
     color: #f0f6fc !important;
+}
+
+/* Override for match cards and business cards - force dark text for readability on light backgrounds */
+.match-card .card-title,
+.match-card .card-text,
+.match-card p,
+.match-card small,
+.match-card .card-body>div,
+.match-card h5,
+.match-card h6 {
+    color: #1F2937 !important;
+}
+
+.business-card .card-title,
+.business-card .card-text,
+.business-card p,
+.business-card small,
+.business-card .card-body>div,
+.business-card h5,
+.business-card h6 {
+    color: #1F2937 !important;
 }
 
 .card-title,
@@ -705,6 +770,29 @@ tbody tr {
 .table tbody tr:hover,
 tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Notification Cards - Light background with dark text for readability */
+.notification-card,
+#notificationListPage .list-group-item {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.15s ease;
+}
+
+#notificationListPage .list-group-item:hover {
+    background-color: #e9ecef !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+#notificationListPage .list-group-item.unread {
+    background-color: #fff3cd !important;
+    border-left: 4px solid #f59e0b !important;
+}
+
+#notificationListPage .list-group-item.unread:hover {
+    background-color: #ffeaa7 !important;
 }
 
 /* List Group Items for Leaderboards */

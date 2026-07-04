@@ -386,14 +386,14 @@
                                                 <i class="bi bi-people me-1"></i>${match.player_count}/${match.max_players}
                                             </span>
                                         </div>
-                                        <h5 class="card-title text-white mb-2">
+                                        <h5 class="card-title text-dark mb-2">
                                             <i class="bi bi-trophy text-warning me-1"></i>${match.sport_name}
                                         </h5>
                                         <div class="match-details small flex-grow-1">
-                                            <div class="mb-1 text-white"><i class="bi bi-geo-alt text-danger me-1"></i>${match.venue_name}</div>
-                                            <div class="mb-1 text-white"><i class="bi bi-calendar-date text-primary me-1"></i>${match.match_date}</div>
-                                            <div class="mb-1 text-white"><i class="bi bi-clock text-info me-1"></i>${match.match_time}</div>
-                                            <div class="text-white"><i class="bi bi-person-circle me-1"></i>${match.creator_name}</div>
+                                            <div class="mb-1 text-dark"><i class="bi bi-geo-alt text-danger me-1"></i>${match.venue_name}</div>
+                                            <div class="mb-1 text-dark"><i class="bi bi-calendar-date text-primary me-1"></i>${match.match_date}</div>
+                                            <div class="mb-1 text-dark"><i class="bi bi-clock text-info me-1"></i>${match.match_time}</div>
+                                            <div class="text-dark"><i class="bi bi-person-circle me-1"></i>${match.creator_name}</div>
                                         </div>
                                         <div class="mt-3 d-flex gap-2">
                                             ${btnHtml}
@@ -961,9 +961,9 @@
                     if (sport.upcoming_matches && sport.upcoming_matches.length > 0) {
                         var matchHtml = '<div class="list-group list-group-flush">';
                         sport.upcoming_matches.forEach(function (m) {
-                            matchHtml += '<div class="list-group-item bg-transparent border-secondary text-white px-0 py-2">';
+                            matchHtml += '<div class="list-group-item bg-light border-secondary text-dark px-3 py-2">';
                             matchHtml += '<div class="d-flex justify-content-between align-items-center">';
-                            matchHtml += '<div><strong>' + m.venue_name + '</strong><br><small>' + m.match_date + ' at ' + m.match_time + '</small></div>';
+                            matchHtml += '<div><strong class="text-dark">' + m.venue_name + '</strong><br><small class="text-secondary">' + m.match_date + ' at ' + m.match_time + '</small></div>';
                             matchHtml += '<span class="badge bg-dark border border-secondary">' + m.player_count + '/' + m.max_players + '</span>';
                             matchHtml += '</div></div>';
                         });
@@ -971,7 +971,7 @@
                         matchesListEl.innerHTML = matchHtml;
                         matchesSection.classList.remove('d-none');
                     } else {
-                        matchesListEl.innerHTML = '<p class="text-white-50 mb-0">No upcoming matches available.</p>';
+                        matchesListEl.innerHTML = '<p class="text-muted mb-0">No upcoming matches available.</p>';
                         matchesSection.classList.remove('d-none');
                     }
 
@@ -981,17 +981,17 @@
                     if (sport.nearby_venues && sport.nearby_venues.length > 0) {
                         var venueHtml = '<div class="list-group list-group-flush">';
                         sport.nearby_venues.forEach(function (v) {
-                            venueHtml += '<div class="list-group-item bg-transparent border-secondary text-white px-0 py-2">';
+                            venueHtml += '<div class="list-group-item bg-light border-secondary text-dark px-3 py-2">';
                             venueHtml += '<div class="d-flex justify-content-between align-items-center">';
-                            venueHtml += '<div><strong>' + v.name + '</strong><br><small>' + (v.address || '') + '</small></div>';
+                            venueHtml += '<div><strong class="text-dark">' + v.name + '</strong><br><small class="text-secondary">' + (v.address || '') + '</small></div>';
                             venueHtml += '<span class="badge bg-warning text-dark">' + (v.rating || 'N/A') + ' <i class="bi bi-star-fill ms-1"></i></span>';
                             venueHtml += '</div></div>';
-                        });
+                        }); matchesListEl.innerHTML = '<p class="text-white-50 mb-0">No upcoming matches available.</p>';
                         venueHtml += '</div>';
                         venuesListEl.innerHTML = venueHtml;
                         venuesSection.classList.remove('d-none');
                     } else {
-                        venuesListEl.innerHTML = '<p class="text-white-50 mb-0">No nearby venues found.</p>';
+                        venuesListEl.innerHTML = '<p class="text-muted mb-0">No nearby venues found.</p>';
                         venuesSection.classList.remove('d-none');
                     }
 

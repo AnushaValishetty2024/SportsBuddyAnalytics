@@ -104,11 +104,65 @@
                 <div class="row">
                     {% for badge in badges %}
                     <div class="col-md-4 col-sm-6 mb-3">
-                        <div class="card border-warning">
+                        <div class="card border-warning h-100">
                             <div class="card-body text-center">
-                                <i class="bi {{ badge.icon }} text-warning" style="font-size: 2rem;"></i>
-                                <h6 class="card-title mt-2">{{ badge.badge_name }}</h6>
-                                <p class="card-text small text-muted">{{ badge.description }}</p>
+                                <i class="bi {{ badge.icon | default('bi-trophy-fill') }} text-warning"
+                                    style="font-size: 2rem;"></i>
+                                {% set badge_names = {
+                                'first_match': 'First Match',
+                                'match_winner': 'Match Winner',
+                                'mvp': 'MVP Player',
+                                'winning_streak': 'Winning Streak',
+                                'active_player': 'Active Player',
+                                'team_player': 'Team Player',
+                                'rising_star': 'Rising Star',
+                                'consistent_performer': 'Consistent Performer',
+                                'sports_enthusiast': 'Sports Enthusiast',
+                                'dedicated_member': 'Dedicated Member'
+                                } %}
+                                {% set badge_icons = {
+                                'first_match': 'bi-star-fill',
+                                'match_winner': 'bi-trophy-fill',
+                                'mvp': 'bi-award-fill',
+                                'winning_streak': 'bi-fire',
+                                'active_player': 'bi-lightning',
+                                'team_player': 'bi-people-fill',
+                                'rising_star': 'bi-arrow-up-circle-fill',
+                                'consistent_performer': 'bi-check-circle-fill',
+                                'sports_enthusiast': 'bi-heart-fill',
+                                'dedicated_member': 'bi-gem'
+                                } %}
+                                <h6 class="card-title mt-2">
+                                    <i
+                                        class="bi {{ badge_icons.get(badge.badge_code, 'bi-trophy-fill') }} text-warning me-1"></i>
+                                    {{ badge.badge_name or badge_names.get(badge.badge_code, 'Achievement') }}
+                                </h6>
+                                <p class="card-text small text-muted">
+                                    {% if badge.description %}
+                                    {{ badge.description }}
+                                    {% else %}
+                                    {% set descriptions = {
+                                    'first_match': 'Completed your first match',
+                                    'match_winner': 'Won a competitive match',
+                                    'mvp': 'Most Valuable Player',
+                                    'winning_streak': 'Won multiple matches consecutively',
+                                    'active_player': 'Regular participant in matches',
+                                    'team_player': 'Excellent team collaboration',
+                                    'rising_star': 'Showing exceptional improvement',
+                                    'consistent_performer': 'Maintained consistent performance',
+                                    'sports_enthusiast': 'Passionate about sports',
+                                    'dedicated_member': 'Long-term dedicated member'
+                                    } %}
+                                    {{ descriptions.get(badge.badge_code, 'Achievement unlocked') }}
+                                    {% endif %}
+                                </p>
+                                {% if badge.criteria_type %}
+                                <p class="card-text small text-muted fst-italic">
+                                    Category: {{ badge.criteria_type|replace('_', ' ')|title }}
+                                </p>
+                                {% endif %}
+                                <small class="text-muted">Earned: {{ badge.awarded_at.strftime('%d %B %Y') if
+                                    badge.awarded_at else 'N/A' }}</small>
                             </div>
                         </div>
                     </div>

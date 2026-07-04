@@ -483,16 +483,18 @@ def seed_demo_data():
         if badges_count == 0:
             print("  Inserting badge definitions...")
             badges = [
-                ('first_match', 'First Match', 'Completed your first match', 'bi-trophy-fill', 'matches_played', 1),
-                ('matches_5', '5 Matches Played', 'Played 5 matches', 'bi-trophy-fill', 'matches_played', 5),
-                ('matches_10', '10 Matches Played', 'Played 10 matches', 'bi-trophy-fill', 'matches_played', 10),
-                ('first_win', 'First Victory', 'Won your first match', 'bi-star-fill', 'wins', 1),
-                ('wins_5', '5 Wins', 'Won 5 matches', 'bi-star-fill', 'wins', 5),
-                ('weekly_top', 'Weekly Top Player', 'Ranked #1 this week', 'bi-calendar-week-fill', 'weekly_top', 1),
-                ('monthly_top', 'Monthly Top Player', 'Ranked #1 this month', 'bi-calendar-month-fill', 'monthly_top', 1),
-                ('mvp', 'Most Valuable Player', 'Earned MVP in a match', 'bi-award-fill', 'custom', 1),
-                ('tournament_champion', 'Tournament Champion', 'Won a tournament', 'bi-trophy-fill', 'tournaments_won', 1),
+                ('first_match', 'First Match', 'Awarded after completing the first match', 'bi-trophy-fill', 'matches_played', 1),
                 ('rising_star', 'Rising Star', 'Showed exceptional improvement', 'bi-arrow-up-circle-fill', 'custom', 1),
+                ('match_winner', 'Match Winner', 'Won a competitive match', 'bi-trophy-fill', 'wins', 1),
+                ('tournament_champion', 'Tournament Champion', 'Won a tournament', 'bi-trophy-fill', 'tournaments_won', 1),
+                ('mvp', 'MVP', 'Most Valuable Player in a match', 'bi-award-fill', 'custom', 1),
+                ('winning_streak', 'Winning Streak', 'Won 3 matches in a row', 'bi-fire', 'wins', 3),
+                ('team_player', 'Team Player', 'Played 5 team matches', 'bi-people-fill', 'matches_played', 5),
+                ('sharp_shooter', 'Sharp Shooter', 'High accuracy in matches', 'bi-bullseye', 'custom', 1),
+                ('weekly_champion', 'Weekly Champion', 'Ranked #1 this week', 'bi-calendar-week-fill', 'weekly_top', 1),
+                ('monthly_champion', 'Monthly Champion', 'Ranked #1 this month', 'bi-calendar-month-fill', 'monthly_top', 1),
+                ('consistent_performer', 'Consistent Performer', 'Played 10 matches consistently', 'bi-check-circle-fill', 'matches_played', 10),
+                ('sports_enthusiast', 'Sports Enthusiast', 'Participated in multiple sports', 'bi-heart-fill', 'custom', 1),
             ]
 
             cur = mysql.connection.cursor()
@@ -523,37 +525,29 @@ def seed_demo_data():
 
             if users:
                 badge_assignments = [
-                    (1, 'first_match'), (1, 'mvp'), (1, 'weekly_top'),
-                    (2, 'first_match'), (2, 'first_win'),
+                    (1, 'first_match'), (1, 'match_winner'), (1, 'mvp'),
+                    (2, 'first_match'), (2, 'sharp_shooter'),
                     (3, 'first_match'), (3, 'rising_star'),
-                    (4, 'first_match'), (4, 'wins_5'),
-                    (5, 'first_match'), (5, 'mvp'), (5, 'monthly_top'),
-                    (6, 'first_match'), (6, 'matches_5'),
-                    (7, 'first_match'), (7, 'first_win'),
+                    (4, 'first_match'), (4, 'team_player'),
+                    (5, 'first_match'), (5, 'mvp'), (5, 'weekly_champion'),
+                    (6, 'first_match'), (6, 'match_winner'),
+                    (7, 'first_match'), (7, 'sports_enthusiast'),
                     (8, 'first_match'), (8, 'rising_star'),
-                    (9, 'first_match'), (9, 'matches_5'),
-                    (10, 'first_match'), (10, 'first_win'), (10, 'weekly_top'),
+                    (9, 'first_match'), (9, 'consistent_performer'),
+                    (10, 'first_match'), (10, 'match_winner'), (10, 'weekly_champion'),
                 ]
-
-                import random
-                random.seed(42)
-                badge_codes = ['first_match', 'matches_5', 'first_win', 'wins_5', 'weekly_top', 'monthly_top', 'mvp', 'rising_star']
 
                 cur = mysql.connection.cursor()
                 assignments_count = 0
-                for idx, user in enumerate(users):
-                    user_id = user['id']
-                    num_badges = random.randint(2, 4)
-                    selected_badges = random.sample(badge_codes, min(num_badges, len(badge_codes)))
-                    for badge_code in selected_badges:
-                        try:
-                            cur.execute("""
-                                INSERT IGNORE INTO user_badges (user_id, badge_code, awarded_at)
-                                VALUES (%s, %s, NOW())
-                            """, (user_id, badge_code))
-                            assignments_count += 1
-                        except Exception as e:
-                            print(f"  Error assigning badge: {e}")
+                for user_id, badge_code in badge_assignments:
+                    try:
+                        cur.execute("""
+                            INSERT IGNORE INTO user_badges (user_id, badge_code, awarded_at)
+                            VALUES (%s, %s, NOW())
+                        """, (user_id, badge_code))
+                        assignments_count += 1
+                    except Exception as e:
+                        print(f"  Error assigning badge: {e}")
 
                 mysql.connection.commit()
                 cur.close()
