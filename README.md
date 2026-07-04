@@ -136,8 +136,6 @@ SportsBuddyAnalytics/
 
 ---
 
-# 📸 Screenshots
-
 ## 🏠 Home Page
 
 ![Home Page](screenshots/home-page.png)
@@ -162,19 +160,19 @@ SportsBuddyAnalytics/
 
 | Discover Matches | Game Details |
 |------------------|--------------|
-| ![Discover Matches](screenshots/discover-matches.png) | ![Game Details](screenshots/game-details.png) |
+| ![Discover Matches](screenshots/Discover-matches.png) | ![Game Details](screenshots/game-details.png) |
 
 ---
 
 ## 📈 Analytics Dashboard
 
-![Analytics](screenshots/analytics.png)
+![analytics](screenshots/analtyics.png)
 
 ---
 
 ## 🤖 AI Assistant
 
-![AI Assistant](screenshots/ai-assistant.png)
+![AI Assistant](screenshots/AI-assistent.png)
 
 ---
 
@@ -182,57 +180,13 @@ SportsBuddyAnalytics/
 
 | Teams | Create Team |
 |-------|-------------|
-| ![Teams](screenshots/teams.png) | ![Create Team](screenshots/create-team.png) |
+| ![Teams](screenshots/Teams.png) | ![Create Team](screenshots/create-team.png) |
 
 | Team Details | Team Leaderboard |
 |--------------|------------------|
 | ![Team Details](screenshots/team-details.png) | ![Team Leaderboard](screenshots/team-leaderboard.png) |
 
----
 
-## 🏆 Rankings
-
-| Weekly | Monthly |
-|---------|----------|
-| ![Weekly Ranking](screenshots/weekly-ranking.png) | ![Monthly Ranking](screenshots/monthly-ranking.png) |
-
-| Lifetime | Player Ranking |
-|-----------|----------------|
-| ![Lifetime Ranking](screenshots/lifetime-ranking.png) | ![Player Ranking](screenshots/player-ranking.png) |
-
----
-
-## 📍 Maps & Locations
-
-| Match Map | Venue Map |
-|-----------|-----------|
-| ![Match Map](screenshots/match-map.png) | ![Venue Map](screenshots/venue-map.png) |
-
----
-
-## 🏟 Sports & Events
-
-| Upcoming Matches | Nearby Sports |
-|-----------------|---------------|
-| ![Upcoming Matches](screenshots/upcoming-matches.png) | ![Nearby Sports](screenshots/nearby-sports.png) |
-
-### All Sports
-
-![All Sports](screenshots/all-sports.png)
-
----
-
-## 💬 Team Chat
-
-![Chat](screenshots/chat.png)
-
----
-
-## ⚙️ Admin Features
-
-| Score Adjustment | Adjust Points |
-|-----------------|---------------|
-| ![Score Adjustment](screenshots/score-adjustment.png) | ![Adjust Points](screenshots/adjust-points.png) |
 
 # ⚙️ Installation Steps
 
