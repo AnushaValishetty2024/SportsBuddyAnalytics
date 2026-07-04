@@ -136,6 +136,8 @@ SportsBuddyAnalytics/
 
 ---
 
+# 📸 Project Screenshots
+
 ## 🏠 Home Page
 
 ![Home Page](screenshots/home-page.png)
@@ -150,7 +152,7 @@ SportsBuddyAnalytics/
 
 ---
 
-## 📊 Dashboard
+## 📊 Player Dashboard
 
 ![Dashboard](screenshots/dashboard.png)
 
@@ -162,17 +164,21 @@ SportsBuddyAnalytics/
 |------------------|--------------|
 | ![Discover Matches](screenshots/Discover-matches.png) | ![Game Details](screenshots/game-details.png) |
 
+### 🌍 All Sports
+
+![All Sports](screenshots/all-sports.png)
+
+---
+
+## 🤖 AI Sports Assistant
+
+![AI Assistant](screenshots/AI-assistent.png)
+
 ---
 
 ## 📈 Analytics Dashboard
 
-![analytics](screenshots/analtyics.png)
-
----
-
-## 🤖 AI Assistant
-
-![AI Assistant](screenshots/AI-assistent.png)
+![Analytics Dashboard](screenshots/analtyics.png)
 
 ---
 
@@ -185,6 +191,48 @@ SportsBuddyAnalytics/
 | Team Details | Team Leaderboard |
 |--------------|------------------|
 | ![Team Details](screenshots/team-details.png) | ![Team Leaderboard](screenshots/team-leaderboard.png) |
+
+---
+
+## 🏆 Leaderboards & Rankings
+
+| Weekly Ranking | Monthly Ranking |
+|----------------|-----------------|
+| ![Weekly Ranking](screenshots/weekly-ranking.png) | ![Monthly Ranking](screenshots/monthly-ranking.png) |
+
+| Lifetime Ranking | Player Ranking |
+|------------------|----------------|
+| ![Lifetime Ranking](screenshots/lifetime-ranking.png) | ![Player Ranking](screenshots/player-ranking.png) |
+
+---
+
+## 📅 Upcoming Sports Events
+
+| Upcoming Matches | Nearby Sports |
+|-----------------|---------------|
+| ![Upcoming Matches](screenshots/upcoming-matches.png) | ![Nearby Sports](screenshots/nearby-sports.png) |
+
+---
+
+## 🗺 Sports Venue Maps
+
+| Match Map | Venue Map |
+|-----------|-----------|
+| ![Match Map](screenshots/match-map.png) | ![Venue Map](screenshots/venue-map.png) |
+
+---
+
+## 💬 Team Chat
+
+![Team Chat](screenshots/chat.png)
+
+---
+
+## ⚙️ Admin Features
+
+| Score Adjustment | Adjust Points |
+|-----------------|---------------|
+| ![Score Adjustment](screenshots/score-adjustment.png) | ![Adjust Points](screenshots/adjust-points.png) |
 
 
 
