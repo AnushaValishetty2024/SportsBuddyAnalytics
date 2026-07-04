@@ -138,39 +138,100 @@ SportsBuddyAnalytics/
 
 # 📸 Screenshots
 
-| Home Page |
-|-----------|
-| *(Add Screenshot)* |
+## 🏠 Home Page
 
-| Login | Register |
-|--------|----------|
-| *(Add Screenshot)* | *(Add Screenshot)* |
-
-| Dashboard |
-|-----------|
-| *(Add Screenshot)* |
-
-| Discover Matches |
-|------------------|
-| *(Add Screenshot)* |
-
-| Leaderboard |
-|-------------|
-| *(Add Screenshot)* |
-
-| Notifications |
-|---------------|
-| *(Add Screenshot)* |
-
-| Profile |
-|---------|
-| *(Add Screenshot)* |
-
-| Analytics Dashboard |
-|---------------------|
-| *(Add Screenshot)* |
+![Home Page](screenshots/home%20page.png)
 
 ---
+
+## 🔐 User Authentication
+
+| Login | Create Account |
+|--------|----------------|
+| ![](screenshots/login.png) | ![](screenshots/create%20account.png) |
+
+---
+
+## 🏅 Player Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+## ⚽ Match Discovery
+
+| Discover Matches | Game Details |
+|------------------|--------------|
+| ![](screenshots/Discover%20matches.png) | ![](screenshots/game%20details.png) |
+
+---
+
+## 📊 Analytics Dashboard
+
+![Analytics](screenshots/analtyics.png)
+
+---
+
+## 🤖 AI Assistant
+
+![AI Assistant](screenshots/AI%20assistent.png)
+
+---
+
+## 👥 Team Management
+
+| Teams | Create Team |
+|-------|-------------|
+| ![](screenshots/Teams.png) | ![](screenshots/create%20team.png) |
+
+| Team Details | Team Leaderboard |
+|--------------|------------------|
+| ![](screenshots/team%20details.png) | ![](screenshots/team%20leaderboard.png) |
+
+---
+
+## 🏆 Leaderboards
+
+| Weekly Ranking | Monthly Ranking |
+|---------------|-----------------|
+| ![](screenshots/weekly%20ranking.png) | ![](screenshots/monthly%20ranking.png) |
+
+| Lifetime Ranking | Player Ranking |
+|------------------|----------------|
+| ![](screenshots/lifetime%20ranking.png) | ![](screenshots/player%20ranking.png) |
+
+---
+
+## 📅 Match & Venue Information
+
+| Upcoming Matches | Nearby Sports |
+|-----------------|---------------|
+| ![](screenshots/upcoming%20matches.png) | ![](screenshots/nearby%20sports.png) |
+
+| Match Map | Venue Map |
+|-----------|-----------|
+| ![](screenshots/match%20map.png) | ![](screenshots/venue%20map.png) |
+
+---
+
+## 💬 Team Chat
+
+![Chat](screenshots/chat.png)
+
+---
+
+## ⚙️ Admin Features
+
+| Score Adjustment | Adjust Points |
+|-----------------|---------------|
+| ![](screenshots/score%20adjustment.png) | ![](screenshots/adjust%20points.png) |
+
+---
+
+## 🌍 Sports Categories
+
+![All Sports](screenshots/all%20sports.png)
+
 
 # ⚙️ Installation Steps
 
