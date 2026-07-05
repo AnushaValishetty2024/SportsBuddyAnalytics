@@ -407,7 +407,7 @@ config.py
 **Anusha Valishetty**
 
 - GitHub: https://github.com/AnushaValishetty2024
-- LinkedIn: *(Add Your LinkedIn Profile)*
+- LinkedIn: https://www.linkedin.com/in/anushavalishetty/
 
 ---
 
