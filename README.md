@@ -13,7 +13,6 @@
 ![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)
 
 
-A full-stack Sports Event Management and Analytics web application built using Flask, Python, MySQL, HTML, CSS, JavaScript, and Bootstrap.
 A full-stack **Sports Event Management and Analytics** web application built using **Flask, Python, MySQL, HTML, CSS, JavaScript, and Bootstrap**. The platform enables players to discover and join sports events, connect with teammates, track achievements, view leaderboards, receive notifications, and monitor their performance through an interactive dashboard.
 
 ---
