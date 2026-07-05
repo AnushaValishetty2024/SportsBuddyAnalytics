@@ -1,7 +1,5 @@
 # 🏆 Sports Buddy Analytics
 
-# 🏆 Sports Buddy Analytics
-
 ![Python](https://img.shields.io/badge/Python-3.9-blue?logo=python)
 ![Flask](https://img.shields.io/badge/Flask-Web%20Framework-black?logo=flask)
 ![MySQL](https://img.shields.io/badge/MySQL-Database-orange?logo=mysql)
