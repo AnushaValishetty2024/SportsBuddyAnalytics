@@ -1,5 +1,19 @@
 # 🏆 Sports Buddy Analytics
 
+# 🏆 Sports Buddy Analytics
+
+![Python](https://img.shields.io/badge/Python-3.9-blue?logo=python)
+![Flask](https://img.shields.io/badge/Flask-Web%20Framework-black?logo=flask)
+![MySQL](https://img.shields.io/badge/MySQL-Database-orange?logo=mysql)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-purple?logo=bootstrap)
+![HTML5](https://img.shields.io/badge/HTML5-Markup-red?logo=html5)
+![CSS3](https://img.shields.io/badge/CSS3-Styling-blue?logo=css3)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript)
+![Git](https://img.shields.io/badge/Git-Version%20Control-red?logo=git)
+![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)
+
+
+A full-stack Sports Event Management and Analytics web application built using Flask, Python, MySQL, HTML, CSS, JavaScript, and Bootstrap.
 A full-stack **Sports Event Management and Analytics** web application built using **Flask, Python, MySQL, HTML, CSS, JavaScript, and Bootstrap**. The platform enables players to discover and join sports events, connect with teammates, track achievements, view leaderboards, receive notifications, and monitor their performance through an interactive dashboard.
 
 ---
